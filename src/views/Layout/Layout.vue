@@ -1,10 +1,10 @@
 <template>
-  <el-scrollbar style="height:100%" class="scrollbar-handle">    
+  <div>
     <keep-alive>
       <router-view v-if="$route.meta.keepAlive"></router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.keepAlive"></router-view>
-  </el-scrollbar>
+  </div>
 </template>
 
 
