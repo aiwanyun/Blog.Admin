@@ -181,8 +181,8 @@ export default {
     getWeChatAccount() {
       this.listLoading = true;
       let para = {
-          intPageIndex: this.page.pageIndex,
-          intPageSize: this.page.pageSize,
+          PageIndex: this.page.pageIndex,
+          PageSize: this.page.pageSize,
           strOrderByFileds:'', 
       };
       if(this.filters.name){

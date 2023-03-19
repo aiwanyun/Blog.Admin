@@ -111,8 +111,8 @@ export default {
     searchWeChatAccount() {
       this.listLoading = true;  
       var pars = { 
-        intPageIndex: this.page.pageIndex,
-        intPageSize: this.page.pageSize,
+        PageIndex: this.page.pageIndex,
+        PageSize: this.page.pageSize,
         strOrderByFileds: "PushLogTime desc",
         conditions: "PushLogPublicAccount = " + this.selectWeChat
       }

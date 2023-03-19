@@ -109,8 +109,8 @@ export default {
       if(this.selectWeChat == '' || this.selectCompany=='') return;
       this.listLoading = true;  
       var pars = {
-        intPageIndex: this.page.pageIndex,
-        intPageSize: this.page.pageSize,
+        PageIndex: this.page.pageIndex,
+        PageSize: this.page.pageSize,
         strOrderByFileds: "SubFromPublicAccount asc",
         conditions:"SubFromPublicAccount = " + this.selectWeChat + " & " + "IsUnBind = false"
       };

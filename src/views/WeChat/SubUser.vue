@@ -99,8 +99,8 @@ export default {
       this.listLoading = true;  
       getWeChatSubUser({
         id:this.selectWeChat,
-        intPageIndex: this.page.pageIndex,
-        intPageSize: this.page.pageSize,
+        PageIndex: this.page.pageIndex,
+        PageSize: this.page.pageSize,
         strOrderByFileds: "PushLogTime desc"
       }).then(res => {
         this.listLoading = false;
