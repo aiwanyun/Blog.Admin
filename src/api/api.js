@@ -342,7 +342,12 @@ export const resumeJob = params => {
 export const getTaskNameSpace = params => {
     return axios.get(`${base}/api/TasksQz/GetTaskNameSpace`, {params: params});
 };
-
+export const GetTaskLogs = params => {
+    return axios.get(`${base}/api/TasksQz/GetTaskLogs`, {params: params});
+};
+export const GetTaskOverview = params => {
+    return axios.get(`${base}/api/TasksQz/GetTaskOverview`, {params: params});
+};
 // ids4
 export const getAchieveUsers_IS4 = params => {
     return axios.get(`${base}/is4api/GetAchieveUsers`, {params: params});
