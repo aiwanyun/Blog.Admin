@@ -522,3 +522,21 @@ export const updateTrojanUrlServer = params => {
 export const addTrojanUrlServer = params => {
     return axios.post(`${base}/api/Trojan/AddUrlServers`, params);
 };
+
+
+//获取血糖实例
+export const getNightscout = params => {
+    return axios.get(`${base}/api/Nightscout/Get`, { params: params });
+};
+//删除血糖实例
+export const delNightscout = params => {
+    return axios.delete(`${base}/api/Nightscout/Delete`, {params: params});
+}; 
+//修改血糖实例
+export const updateNightscout = params => {
+    return axios.put(`${base}/api/Nightscout/Put`, params);
+};
+//添加血糖实例
+export const addNightscout = params => {
+    return axios.post(`${base}/api/Nightscout/Post`, params);
+};
