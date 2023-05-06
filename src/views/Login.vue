@@ -205,6 +205,8 @@
                             message: data.msg,
                             type: 'error'
                         });
+                        _this.logining = false;
+                        _this.loginStr = "重新登录";
                     } else {
                         // _this.closeAlert()
                         // _this.openAlert("接收到用户数据，开始初始化路由树...")

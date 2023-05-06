@@ -19,13 +19,23 @@
             style="width: 100%;">
             <el-table-column type="selection" width="60"></el-table-column>
             <el-table-column type="index" width="80"></el-table-column>
-            <el-table-column prop="name" label="名称" width sortable></el-table-column>
-            <el-table-column prop="url" label="访问地址" width sortable></el-table-column>
-            <el-table-column prop="tel" label="电话" width sortable></el-table-column>
-            <el-table-column prop="startTime" label="开始时间" width sortable></el-table-column>
-            <el-table-column prop="endTime" label="结束时间" width sortable></el-table-column>
-            <el-table-column prop="remark" label="备注" width sortable></el-table-column>
-            <el-table-column prop="backupurl" label="备用访问" width sortable></el-table-column>
+            <el-table-column show-overflow-tooltip prop="name" label="名称" width="100" sortable></el-table-column>
+            <el-table-column show-overflow-tooltip prop="url" label="访问地址" width="350" sortable></el-table-column>
+            <el-table-column show-overflow-tooltip prop="startTime" label="开始时间" width="100" sortable>
+                <template slot-scope="scope">
+                    {{ (scope.row.startTime.replace(" 00:00:00", "")) }}
+                </template>
+            </el-table-column>
+            <el-table-column show-overflow-tooltip prop="endTime" label="结束时间" width="100" sortable>
+                <template slot-scope="scope">
+                    {{ (scope.row.endTime.replace(" 00:00:00", "")) }}
+                </template>
+            </el-table-column>
+            <el-table-column show-overflow-tooltip prop="passwd" label="密码" width="150" sortable></el-table-column>
+            <el-table-column show-overflow-tooltip prop="tel" label="电话" width="120" sortable></el-table-column>
+
+            <el-table-column show-overflow-tooltip prop="remark" label="备注" min-width="100" sortable></el-table-column>
+            <el-table-column show-overflow-tooltip prop="backupurl" label="备用访问" width="350" sortable></el-table-column>
             <el-table-column label="操作" fixed="right" width="150">
                 <template slot-scope="scope">
                     <el-button size="mini" type="primary" plain @click="handleEdit(scope.row)">编辑</el-button>
@@ -49,9 +59,6 @@
                 <el-form-item label="访问地址" prop="url">
                     <el-input v-model="editForm.url" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="电话" prop="tel">
-                    <el-input v-model="editForm.tel" auto-complete="off"></el-input>
-                </el-form-item>
                 <el-form-item label="开始日期" prop="startTime">
                     <el-date-picker type="date" placeholder="选择日期" v-model="editForm.startTime" value-format="yyyy-MM-dd"
                         :picker-options="pickerOptions"></el-date-picker>
@@ -59,6 +66,12 @@
                 <el-form-item label="结束日期" prop="endTime">
                     <el-date-picker type="date" placeholder="选择日期" v-model="editForm.endTime" value-format="yyyy-MM-dd"
                         :picker-options="pickerOptions"></el-date-picker>
+                </el-form-item>
+                <el-form-item label="密码" prop="passwd">
+                    <el-input v-model="editForm.passwd" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="电话" prop="tel">
+                    <el-input v-model="editForm.tel" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="editForm.remark" auto-complete="off"></el-input>
@@ -73,14 +86,21 @@
             </div>
         </el-dialog>
 
-        <el-dialog title="动态血糖监测" :visible.sync="show" v-model="editFormVisible" :fullscreen="true">
-        
-            <el-row style="height: calc(100vh - 200px);">
-                <el-col :span="8" :key="index" v-for="(item, index) in sels"> <iframe height="300px" width="100%"
-                        :src="item.url"></iframe></el-col>
+        <el-dialog title="动态血糖监测" :visible.sync="show" v-if="show" :fullscreen="true">
+
+            <el-row :gutter="10">
+                <el-col style="margin-bottom: 5px;">
+                    <el-switch v-model="showTitle" active-color="#13ce66" inactive-color="#ff4949">
+                    </el-switch>
+                </el-col>
+                <el-col :span="8" :key="index" v-for="(item, index) in sels">
+                    <el-link v-show="showTitle" icon="el-icon-s-custom">{{ item.name }}</el-link>
+                    <iframe allowTransparency="true" frameborder="no" border="0" marginwidth="0" marginheight="0"
+                        scrolling="no" height="300px" width="100%" :src="item.url"></iframe>
+                </el-col>
             </el-row>
             <div slot="footer" class="dialog-footer">
-                <el-button @click.native="show = false">关闭</el-button>
+                <el-button type="primary" @click.native="show = false">关闭</el-button>
             </div>
         </el-dialog>
     </section>
@@ -93,7 +113,9 @@ import {
     addNightscout,
     updateNightscout
 } from "../../api/api";
+import Template from '../WeChat/Template.vue';
 export default {
+    components: { Template },
     name: "Nightscout",
     data() {
         return {
@@ -125,6 +147,9 @@ export default {
                 ],
                 endTime: [
                     { required: true, message: "结束日期不能为空", trigger: "blur" }
+                ],
+                passwd: [
+                    { required: true, message: "密码不能为空", trigger: "blur" }
                 ]
             },
             pickerOptions: {
@@ -170,6 +195,7 @@ export default {
                 ],
             },
             show: false,
+            showTitle: false,
         };
     },
     created() {
