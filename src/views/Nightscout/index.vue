@@ -9,7 +9,8 @@
                 <el-form-item>
                     <el-button type="primary" @click="handleSearch">查询</el-button>
                     <el-button type="primary" @click="handleAdd">新增</el-button>
-                    <el-button type="primary" @click="handleView">预览</el-button>
+                    <el-button type="primary" @click="handleView(true)">预览</el-button>
+                    <el-button type="primary" @click="handleView(false)">预览(备用)</el-button>
                 </el-form-item>
             </el-form>
         </el-col>
@@ -96,7 +97,7 @@
                 <el-col :span="8" :key="index" v-for="(item, index) in sels">
                     <el-link v-show="showTitle" icon="el-icon-s-custom">{{ item.name }}</el-link>
                     <iframe allowTransparency="true" frameborder="no" border="0" marginwidth="0" marginheight="0"
-                        scrolling="no" height="300px" width="100%" :src="item.url"></iframe>
+                        scrolling="no" height="300px" width="100%" :src="(isNew?item.url:item.backupurl)"></iframe>
                 </el-col>
             </el-row>
             <div slot="footer" class="dialog-footer">
@@ -196,19 +197,21 @@ export default {
             },
             show: false,
             showTitle: false,
+            isNew:true
         };
     },
     created() {
         this.handleSearch();
     },
     methods: {
-        handleView() {
+        handleView(isNew) {
             if (!this.sels.length) {
                 this.$message({
                     message: "请选择要预览的数据!",
                     type: "error"
                 });
             } else {
+                this.isNew = isNew
                 this.show = true
             }
         },
