@@ -44,11 +44,10 @@
                 </template>
             </el-table-column>
         </el-table>
-        <!--工具条-->
-        <el-col :span="24" class="toolbar">
-            <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="page.pageSize"
-                :total="page.pageTotal" style="float:right;"></el-pagination>
-        </el-col>
+        <!--翻页-->
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page.pageIndex"
+            :page-sizes="[10, 100, 500, 1000]" :page-size="page.pageSize" layout="total, sizes, prev, pager, next, jumper"
+            :total="page.pageTotal"></el-pagination>
 
         <!--编辑界面-->
         <el-dialog :title="editType" :visible.sync="editFormVisible" v-model="editFormVisible"
@@ -89,15 +88,23 @@
 
         <el-dialog title="动态血糖监测" :visible.sync="show" v-if="show" :fullscreen="true">
 
+            <el-form :inline="true" label-position="right" label-width="100px">
+                <el-form-item label="显示名称">
+                    <el-checkbox v-model="showTitle"></el-checkbox>
+                </el-form-item>
+                <el-form-item label="排列方式">
+                    <el-checkbox-group v-model="showCount">
+                        <el-checkbox :true-label="1" :false-label="3">1排1个</el-checkbox>
+                        <el-checkbox :true-label="2" :false-label="3">1排2个</el-checkbox>
+                        <el-checkbox :true-label="3" :false-label="3">1排3个</el-checkbox>
+                    </el-checkbox-group>
+                </el-form-item> 
+            </el-form>
             <el-row :gutter="10">
-                <el-col style="margin-bottom: 5px;">
-                    <el-switch v-model="showTitle" active-color="#13ce66" inactive-color="#ff4949">
-                    </el-switch>
-                </el-col>
-                <el-col :span="8" :key="index" v-for="(item, index) in sels">
+                <el-col :span="getShowSpan()" :key="index" v-for="(item, index) in sels">
                     <el-link v-show="showTitle" icon="el-icon-s-custom">{{ item.name }}</el-link>
                     <iframe allowTransparency="true" frameborder="no" border="0" marginwidth="0" marginheight="0"
-                        scrolling="no" height="300px" width="100%" :src="(isNew?item.url:item.backupurl)"></iframe>
+                        scrolling="no" height="300px" width="100%" :src="(isNew ? item.url : item.backupurl)"></iframe>
                 </el-col>
             </el-row>
             <div slot="footer" class="dialog-footer">
@@ -196,14 +203,21 @@ export default {
                 ],
             },
             show: false,
-            showTitle: false,
-            isNew:true
+            showTitle: true,
+            showCount: 3,
+            isNew: true
         };
     },
     created() {
         this.handleSearch();
     },
     methods: {
+        getShowSpan(){
+            if(this.showCount == 1) return 24
+            if(this.showCount == 2) return 12
+            if(this.showCount == 3) return 8
+            return 24
+        },
         handleView(isNew) {
             if (!this.sels.length) {
                 this.$message({
@@ -220,6 +234,11 @@ export default {
         },
         handleCurrentChange(index) {
             this.page.pageIndex = index;
+            this.handleSearch();
+        },
+        handleSizeChange(size) {
+            this.page.pageIndex = 1;
+            this.page.pageSize = size;
             this.handleSearch();
         },
         handleSearch() {
@@ -249,14 +268,14 @@ export default {
         handleEdit(row) {
             //编辑
             this.editFormVisible = true;
-            this.editType = "edit";
+            this.editType = "编辑";
             this.editForm = Object.assign({}, row);
 
         },
         handleAdd() {
             //新增
             this.editFormVisible = true;
-            this.editType = "add";
+            this.editType = "添加";
             this.editForm = Object.assign({});
 
         },
@@ -266,7 +285,7 @@ export default {
                 if (valid) {
                     this.$confirm("确认提交吗？", "提示", {}).then(() => {
                         this.editLoading = true;
-                        if (this.editType == "add") {
+                        if (this.editType == "添加") {
                             //console.log(this.editForm);
                             //var postPara = this.editForm;
                             addNightscout(this.editForm)
@@ -282,7 +301,7 @@ export default {
                                     }
 
                                 });
-                        } else if (this.editType == "edit") {
+                        } else if (this.editType == "编辑") {
                             //console.log(this.editForm);
                             //var postPara = this.editForm;
                             updateNightscout(this.editForm)
