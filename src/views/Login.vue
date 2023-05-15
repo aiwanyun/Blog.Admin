@@ -10,18 +10,18 @@
                  class="demo-ruleForm login-container">
             <h3 class="title">系统登录</h3>
             <el-form-item prop="account">
-                <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
+                <el-input type="text" v-model="ruleForm2.account" @keyup.enter.native.prevent="handleSubmit2" auto-complete="off" placeholder="账号"></el-input>
             </el-form-item>
             <el-form-item prop="checkPass">
-                <el-input v-model="ruleForm2.checkPass" auto-complete="off" show-password placeholder="密码"></el-input>
+                <el-input v-model="ruleForm2.checkPass" @keyup.enter.native.prevent="handleSubmit2" auto-complete="off" show-password placeholder="密码"></el-input>
             </el-form-item>
             <el-checkbox v-model="checked" checked class="remember">记住密码</el-checkbox>
 
             <div style="margin-bottom: 20px;" class="count-test">
                 <el-radio-group @change="loginAccount" v-model="account3">
-                    <el-radio-button label="测试账号1"></el-radio-button>
-                    <el-radio-button label="测试账号2"></el-radio-button>
-                    <el-radio-button label="超级管理员"></el-radio-button>
+                    <el-radio-button label="账号1"></el-radio-button>
+                    <el-radio-button label="账号2"></el-radio-button>
+                    <el-radio-button label="管理员"></el-radio-button>
                 </el-radio-group>
             </div>
             <el-form-item style="width:100%;">
@@ -158,7 +158,14 @@
                                 _this.loginStr = "重新登录";
                                 // _this.closeAlert()
                             } else {
-
+                                localStorage.setItem('checked',this.checked)
+                                if(this.checked){
+                                    localStorage.setItem('account',this.ruleForm2.account)
+                                    localStorage.setItem('checkPass',this.ruleForm2.checkPass)
+                                }else{
+                                    localStorage.setItem('account',null)
+                                    localStorage.setItem('checkPass',null)
+                                }
                                 var token = data.response.token;
                                 _this.$store.commit("saveToken", token);
 
@@ -263,10 +270,21 @@
                 });
             }
         },
+        created(){
+            let isCheck = localStorage.getItem('checked')
+            if(isCheck !== null){
+                 if(isCheck === 'true'){
+                    this.checked = true
+                    this.ruleForm2.account = localStorage.getItem('account')
+                    this.ruleForm2.checkPass = localStorage.getItem('checkPass')
+                 }else{
+                    this.checked = false
+                 }
+            }
+        },
         mounted() {
             // window.localStorage.clear()
             console.info('%c 本地缓存已清空!', "color:green")
-
         },
     }
 
