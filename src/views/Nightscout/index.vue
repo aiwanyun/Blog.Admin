@@ -20,27 +20,67 @@
             style="width: 100%;">
             <el-table-column type="selection" width="60"></el-table-column>
             <el-table-column type="index" width="80"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="name" label="名称" width="100" sortable></el-table-column>
-            <el-table-column show-overflow-tooltip prop="url" label="访问地址" width="350" sortable></el-table-column>
-            <el-table-column show-overflow-tooltip prop="startTime" label="开始时间" width="100" sortable>
+            <el-table-column show-overflow-tooltip prop="name" label="名称" width="100"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="url" label="访问地址" width="350">
+                <template slot-scope="scope">
+                    {{ (scope.row.url ? 'https://' : '') }}{{ scope.row.url }}
+                </template>
+            </el-table-column>
+            <el-table-column show-overflow-tooltip prop="startTime" label="开始时间" width="100">
                 <template slot-scope="scope">
                     {{ (scope.row.startTime.replace(" 00:00:00", "")) }}
                 </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="endTime" label="结束时间" width="100" sortable>
+            <el-table-column show-overflow-tooltip prop="endTime" label="结束时间" width="100">
                 <template slot-scope="scope">
                     {{ (scope.row.endTime.replace(" 00:00:00", "")) }}
                 </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="passwd" label="密码" width="150" sortable></el-table-column>
-            <el-table-column show-overflow-tooltip prop="tel" label="电话" width="120" sortable></el-table-column>
+            <el-table-column show-overflow-tooltip prop="passwd" label="密码" width="150"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="remark" label="备注" width="120"></el-table-column>
 
-            <el-table-column show-overflow-tooltip prop="remark" label="备注" min-width="100" sortable></el-table-column>
-            <el-table-column show-overflow-tooltip prop="backupurl" label="备用访问" width="350" sortable></el-table-column>
-            <el-table-column label="操作" fixed="right" width="150">
+            <el-table-column show-overflow-tooltip prop="instanceIP" label="实例IP" min-width="150"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="serviceName" label="服务名称" min-width="150"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="isRefresh" label="强制刷新" min-width="100">
+                <template slot-scope="scope">
+                    <el-tag>{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column show-overflow-tooltip prop="isConnection" label="是否接入" min-width="100">
+                <template slot-scope="scope">
+                    <el-tag>{{ scope.row.isConnection ? '是' : '否' }}</el-tag>
+                </template>
+            </el-table-column>
+
+
+            <el-table-column show-overflow-tooltip prop="backupurl" label="备用访问" width="350">
+                <template slot-scope="scope">
+                    {{ (scope.row.backupurl ? 'https://' : '') }}{{ scope.row.backupurl }}
+                </template>
+            </el-table-column>
+            <el-table-column show-overflow-tooltip prop="tel" label="电话" width="120"></el-table-column>
+
+            <el-table-column label="操作" fixed="right" width="100">
                 <template slot-scope="scope">
                     <el-button size="mini" type="primary" plain @click="handleEdit(scope.row)">编辑</el-button>
-                    <el-button size="mini" type="danger" plain @click="handleDel(scope.row)">删除</el-button>
+                    <el-dropdown trigger="click">
+                        <span class="el-dropdown-link">
+                            更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item icon="el-icon-plus"
+                                @click.native="handleBind(scope.row)">获取绑定二维码</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-close-notification"
+                                @click.native="handleUnbind(scope.row)">解除绑定</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-s-order"
+                                @click.native="handleLog(scope.row)">操作日志</el-dropdown-item>
+
+                            <el-dropdown-item icon="el-icon-s-order"
+                                @click.native="handleRefresh(scope.row)">强制刷新</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-delete"
+                                @click.native="handleDel(scope.row)">删除</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
                 </template>
             </el-table-column>
         </el-table>
@@ -56,9 +96,13 @@
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="editForm.name" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="访问地址" prop="url">
-                    <el-input v-model="editForm.url" auto-complete="off"></el-input>
-                </el-form-item>
+                <el-tooltip class="item" effect="dark" content="不需要额外添加https否则会出问题" placement="top">
+                    <el-form-item label="访问地址" prop="url">
+                        <el-input v-model="editForm.url">
+                            <template slot="prepend">https://</template>
+                        </el-input>
+                    </el-form-item>
+                </el-tooltip>
                 <el-form-item label="开始日期" prop="startTime">
                     <el-date-picker type="date" placeholder="选择日期" v-model="editForm.startTime" value-format="yyyy-MM-dd"
                         :picker-options="pickerOptions"></el-date-picker>
@@ -76,9 +120,45 @@
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="editForm.remark" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="备用访问" prop="backupurl">
-                    <el-input v-model="editForm.backupurl" auto-complete="off"></el-input>
-                </el-form-item>
+                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
+                    <el-form-item label="实例IP" prop="instanceIP">
+
+                        <el-input v-model="editForm.instanceIP" auto-complete="off"></el-input>
+
+                    </el-form-item>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
+                    <el-form-item label="服务名称" prop="serviceName">
+
+                        <el-input v-model="editForm.serviceName" auto-complete="off"></el-input>
+
+                    </el-form-item>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="设置后每次编辑都会重启NS服务" placement="top">
+                    <el-form-item label="强制刷新" prop="isRefresh">
+
+                        <el-radio v-model="editForm.isRefresh" :label="true">是</el-radio>
+                        <el-radio v-model="editForm.isRefresh" :label="false">否</el-radio>
+
+                    </el-form-item>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="设置后绑定微信后就可以推送了,需要强制刷新一次" placement="top">
+                    <el-form-item label="是否接入" prop="isConnection">
+
+
+                        <el-radio v-model="editForm.isConnection" :label="true">是</el-radio>
+                        <el-radio v-model="editForm.isConnection" :label="false">否</el-radio>
+
+
+                    </el-form-item>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="不需要额外添加https否则会出问题" placement="top">
+                    <el-form-item label="备用访问" prop="backupurl">
+                        <el-input v-model="editForm.backupurl">
+                            <template slot="prepend">https://</template>
+                        </el-input>
+                    </el-form-item>
+                </el-tooltip>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -98,19 +178,46 @@
                         <el-checkbox :true-label="2" :false-label="3">1排2个</el-checkbox>
                         <el-checkbox :true-label="3" :false-label="3">1排3个</el-checkbox>
                     </el-checkbox-group>
-                </el-form-item> 
+                </el-form-item>
             </el-form>
             <el-row :gutter="10">
                 <el-col :span="getShowSpan()" :key="index" v-for="(item, index) in sels">
                     <el-link v-show="showTitle" icon="el-icon-s-custom">{{ item.name }}</el-link>
                     <iframe allowTransparency="true" frameborder="no" border="0" marginwidth="0" marginheight="0"
-                        scrolling="no" height="300px" width="100%" :src="(isNew ? item.url : item.backupurl)"></iframe>
+                        scrolling="no" height="300px" width="100%"
+                        :src="(isNew ? ('https://' + item.url) : ('https://' + item.backupurl))"></iframe>
                 </el-col>
             </el-row>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click.native="show = false">关闭</el-button>
             </div>
         </el-dialog>
+
+
+        <el-dialog title="微信绑定二维码" :visible.sync="showBind" width="300px">
+            <canvas style="height: 250px;width: 250px;" id="canvas"></canvas>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click.native="showBind = false">关闭</el-button>
+            </div>
+        </el-dialog>
+
+        <el-dialog title="操作日志" :visible.sync="showLog">
+            <el-table :data="tableLog" highlight-current-row style="width: 100%;">
+                <el-table-column type="index" width="80"></el-table-column>
+                <el-table-column show-overflow-tooltip prop="content" label="日志" min-width="350"></el-table-column>
+                <el-table-column show-overflow-tooltip prop="success" label="状态" width="90">
+                    <template slot-scope="scope">
+
+                        <el-tag :type="(scope.row.success ? '' : 'danger')"> {{ (scope.row.success ? '成功' : '失败') }}
+                        </el-tag>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click.native="showLog = false">关闭</el-button>
+            </div>
+        </el-dialog>
+
     </section>
 </template>
   
@@ -119,11 +226,15 @@ import {
     getNightscout,
     delNightscout,
     addNightscout,
-    updateNightscout
+    updateNightscout,
+    Refresh,
+    GetWeChatCode,
+    UnbindWeChat,
+    GetLog
 } from "../../api/api";
-import Template from '../WeChat/Template.vue';
+import QRCode from "qrcode";
 export default {
-    components: { Template },
+    components: {},
     name: "Nightscout",
     data() {
         return {
@@ -133,6 +244,7 @@ export default {
             listLoading: false,
             tableData: [],
             tableUser: [],
+            tableLog: [],
             sels: [],
             page: {
                 pageSize: 10,
@@ -205,17 +317,88 @@ export default {
             show: false,
             showTitle: true,
             showCount: 3,
-            isNew: true
+            isNew: true,
+            showBind: false,
+            showLog: false
         };
     },
     created() {
         this.handleSearch();
     },
     methods: {
-        getShowSpan(){
-            if(this.showCount == 1) return 24
-            if(this.showCount == 2) return 12
-            if(this.showCount == 3) return 8
+        handleRefresh(row) {
+            Refresh({ id: row.Id }).then(res => {
+
+                if (res.data && res.data.success) {
+                    this.$message({
+                        message: res.data.msg || "刷新成功!",
+                        type: "error"
+                    });
+                } else {
+                    this.$message({
+                        message: res.data.msg || "刷新失败!",
+                        type: "error"
+                    });
+                }
+            })
+        },
+        handleBind(row) {
+
+            GetWeChatCode({ id: row.Id }).then(res => {
+
+                if (res.data && res.data.success && res.data.response.usersData.url) {
+                    this.showBind = true
+                    this.$nextTick(() => {
+                        var canvas = document.getElementById("canvas");
+                        QRCode.toCanvas(canvas, res.data.response.usersData.url, { width: 250, height: 250, }, function (error) {
+                            if (error) console.error(error);
+                        });
+                    });
+                } else {
+                    this.$message({
+                        message: res.data.msg || "获取失败!",
+                        type: "error"
+                    });
+                }
+            })
+
+        },
+        handleUnbind(row) {
+            UnbindWeChat({ id: row.Id }).then(res => {
+                if (res.data && res.data.success) {
+                    this.$message({
+                        message: "解绑成功!",
+                        type: "success"
+                    });
+                } else {
+                    this.$message({
+                        message: "解绑失败!",
+                        type: "error"
+                    });
+                }
+            })
+        },
+        handleLog(row) {
+            this.showLog = true
+            this.tableLog = []
+            GetLog({ id: row.Id }).then(res => {
+                if (res.data && res.data.success) {
+                    this.tableLog = res.data.response.data
+                } else {
+                    this.$message({
+                        message: "获取失败!",
+                        type: "error"
+                    });
+                }
+            })
+
+        },
+
+
+        getShowSpan() {
+            if (this.showCount == 1) return 24
+            if (this.showCount == 2) return 12
+            if (this.showCount == 3) return 8
             return 24
         },
         handleView(isNew) {
@@ -327,4 +510,21 @@ export default {
     }
 };
 </script> 
+<style scoped>
+.el-dropdown-link {
+    cursor: pointer;
+    color: #409EFF;
+}
+
+.el-icon-arrow-down {
+    font-size: 12px;
+}
+
+.demonstration {
+    display: block;
+    color: #8492a6;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+</style>
   

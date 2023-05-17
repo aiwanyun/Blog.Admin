@@ -540,3 +540,19 @@ export const updateNightscout = params => {
 export const addNightscout = params => {
     return axios.post(`${base}/api/Nightscout/Post`, params);
 };
+// 刷新实例
+export const Refresh = params => {
+    return axios.get(`${base}/api/Nightscout/Refresh`, { params: params });
+};
+// 获取微信绑定
+export const GetWeChatCode = params => {
+    return axios.get(`${base}/api/Nightscout/GetWeChatCode`, { params: params });
+};
+// 解除绑定
+export const UnbindWeChat = params => {
+    return axios.get(`${base}/api/Nightscout/UnbindWeChat`, { params: params });
+};
+// 获取实例日志
+export const GetLog = params => {
+    return axios.get(`${base}/api/Nightscout/GetLog`, { params: params });
+};
