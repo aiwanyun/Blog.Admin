@@ -21,7 +21,7 @@
             <el-table-column type="selection" width="60"></el-table-column>
             <el-table-column type="index" width="80"></el-table-column>
             <el-table-column show-overflow-tooltip prop="name" label="名称" width="100"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="url" label="访问地址" width="350">
+            <el-table-column show-overflow-tooltip prop="url" label="访问地址" width="250">
                 <template slot-scope="scope">
                     {{ (scope.row.url ? 'https://' : '') }}{{ scope.row.url }}
                 </template>
@@ -37,16 +37,14 @@
                 </template>
             </el-table-column>
             <el-table-column show-overflow-tooltip prop="passwd" label="密码" width="150"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="remark" label="备注" width="120"></el-table-column>
-
-            <el-table-column show-overflow-tooltip prop="instanceIP" label="实例IP" min-width="150"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="serviceName" label="服务名称" min-width="150"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="isRefresh" label="强制刷新" min-width="100">
+            <el-table-column show-overflow-tooltip prop="instanceIP" label="实例IP" width="120"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="serviceName" label="服务名称" width="200"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="isRefresh" label="强制刷新" width="90">
                 <template slot-scope="scope">
                     <el-tag>{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="isConnection" label="是否接入" min-width="100">
+            <el-table-column show-overflow-tooltip prop="isConnection" label="是否接入" width="90">
                 <template slot-scope="scope">
                     <el-tag>{{ scope.row.isConnection ? '是' : '否' }}</el-tag>
                 </template>
@@ -58,6 +56,8 @@
                     {{ (scope.row.backupurl ? 'https://' : '') }}{{ scope.row.backupurl }}
                 </template>
             </el-table-column>
+            
+            <el-table-column show-overflow-tooltip prop="remark" label="备注" width="120"></el-table-column>
             <el-table-column show-overflow-tooltip prop="tel" label="电话" width="120"></el-table-column>
 
             <el-table-column label="操作" fixed="right" width="100">

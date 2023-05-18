@@ -3,7 +3,7 @@ import axios from 'axios';
 import router from '../router/index'
 import store from "../store";
 import Vue from 'vue';
-
+import { Notification, MessageBox, Message, Loading } from "element-ui";
 import applicationUserManager from "../Auth/applicationusermanager";
 
 let base = '';
@@ -15,8 +15,11 @@ let base = '';
 axios.defaults.timeout = 120000
 
 var storeTemp = store;
+var loadingInstance;
 axios.interceptors.request.use(
     config => {
+        if (config.ext === undefined || config.ext.loading === undefined || config.ext.loading === true) loadingInstance = Loading.service({ fullscreen: true });
+    
         var curTime = new Date()
         var expiretime = new Date(Date.parse(storeTemp.state.tokenExpire))
 
@@ -30,6 +33,7 @@ axios.interceptors.request.use(
         return config;
     },
     err => {
+        if (config.ext === undefined || config.ext.loading === undefined || config.ext.loading === true) loadingInstance.close();
         return Promise.reject(err);
     }
 );
@@ -37,9 +41,11 @@ axios.interceptors.request.use(
 // http response 拦截器
 axios.interceptors.response.use(
     response => { 
+        if (config.ext === undefined || config.ext.loading === undefined || config.ext.loading === true) loadingInstance.close();
         return response; 
     },
     error => {
+        if (config.ext === undefined || config.ext.loading === undefined || config.ext.loading === true) loadingInstance.close();
         let errInfo = { success: false, message: "错误" }
         // 超时请求处理
         var originalRequest = error.config;
