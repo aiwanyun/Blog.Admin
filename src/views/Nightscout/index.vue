@@ -326,7 +326,8 @@ export default {
             showCount: 3,
             isNew: true,
             showBind: false,
-            showLog: false
+            showLog: false,
+            curRow: {}
         };
     },
     created() {
@@ -389,8 +390,9 @@ export default {
             })
         },
         handleLog(row) {
+            if (row) this.curRow = row
             this.tableLog = []
-            GetLog({ id: row.Id, pageSize: this.pageLog.pageSize, page: this.pageLog.pageIndex }).then(res => {
+            GetLog({ id: this.curRow.Id, pageSize: this.pageLog.pageSize, page: this.pageLog.pageIndex }).then(res => {
                 if (res.data && res.data.success) {
                     this.showLog = true
                     this.tableLog = res.data.response.data
