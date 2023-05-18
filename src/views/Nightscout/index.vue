@@ -341,7 +341,7 @@ export default {
                     if (res.data && res.data.success) {
                         this.$message({
                             message: res.data.msg || "刷新成功!",
-                            type: "error"
+                            type: "success"
                         });
                     } else {
                         this.$message({
@@ -425,6 +425,10 @@ export default {
         },
         selsChange(sels) {
             this.sels = sels;
+        },
+        handleCurrentChange(index) {
+            this.page.pageIndex = index;
+            this.handleSearch();
         },
         handleCurrentChangeLog(index) {
             this.pageLog.pageIndex = index;
