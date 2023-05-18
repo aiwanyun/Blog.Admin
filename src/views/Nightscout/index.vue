@@ -204,6 +204,7 @@
         <el-dialog title="操作日志" :visible.sync="showLog">
             <el-table :data="tableLog" highlight-current-row style="width: 100%;">
                 <el-table-column type="index" width="80"></el-table-column>
+                <el-table-column show-overflow-tooltip prop="CreateTime" label="创建时间" width="160"></el-table-column>
                 <el-table-column show-overflow-tooltip prop="content" label="日志" min-width="350"></el-table-column>
                 <el-table-column show-overflow-tooltip prop="success" label="状态" width="90">
                     <template slot-scope="scope">
