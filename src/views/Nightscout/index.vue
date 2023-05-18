@@ -248,6 +248,11 @@ export default {
             tableUser: [],
             tableLog: [],
             sels: [],
+            page: {
+                pageSize: 10,
+                pageIndex: 1,
+                pageTotal: 0
+            },
             pageLog: {
                 pageSize: 10,
                 pageIndex: 1,
