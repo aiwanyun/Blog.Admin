@@ -394,6 +394,7 @@ export default {
                 if (res.data && res.data.success) {
                     this.showLog = true
                     this.tableLog = res.data.response.data
+                    this.pageLog.pageTotal = res.data.response.dataCount
                 } else {
                     this.$message({
                         message: "获取失败!",
