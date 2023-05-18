@@ -16,8 +16,7 @@
         </el-col>
 
         <!--列表-->
-        <el-table :data="tableData" highlight-current-row @selection-change="selsChange"
-            style="width: 100%;">
+        <el-table :data="tableData" highlight-current-row @selection-change="selsChange" style="width: 100%;">
             <el-table-column type="selection" width="60"></el-table-column>
             <el-table-column type="index" width="80"></el-table-column>
             <el-table-column show-overflow-tooltip prop="name" label="名称" width="100"></el-table-column>
@@ -46,7 +45,8 @@
             </el-table-column>
             <el-table-column show-overflow-tooltip prop="isConnection" label="是否接入" width="90">
                 <template slot-scope="scope">
-                    <el-tag :type="scope.row.isConnection ? 'success' : ''">{{ scope.row.isConnection ? '是' : '否' }}</el-tag>
+                    <el-tag :type="scope.row.isConnection ? 'success' : ''">{{ scope.row.isConnection ? '是' : '否'
+                    }}</el-tag>
                 </template>
             </el-table-column>
 
@@ -75,7 +75,7 @@
                             <el-dropdown-item icon="el-icon-s-order"
                                 @click.native="handleLog(scope.row)">操作日志</el-dropdown-item>
 
-                            <el-dropdown-item icon="el-icon-s-order"
+                            <el-dropdown-item icon="el-icon-refresh"
                                 @click.native="handleRefresh(scope.row)">强制刷新</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete"
                                 @click.native="handleDel(scope.row)">删除</el-dropdown-item>
@@ -213,6 +213,9 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-pagination @size-change="handleSizeChangeLog" @current-change="handleCurrentChangeLog"
+                :current-page="pageLog.pageIndex" :page-sizes="[10, 100, 500, 1000]" :page-size="pageLog.pageSize"
+                layout="total, sizes, prev, pager, next, jumper" :total="pageLog.pageTotal"></el-pagination>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click.native="showLog = false">关闭</el-button>
             </div>
@@ -245,7 +248,7 @@ export default {
             tableUser: [],
             tableLog: [],
             sels: [],
-            page: {
+            pageLog: {
                 pageSize: 10,
                 pageIndex: 1,
                 pageTotal: 0
@@ -326,20 +329,23 @@ export default {
     },
     methods: {
         handleRefresh(row) {
-            Refresh({ id: row.Id }).then(res => {
+            this.$confirm("确认刷新[" + row.name + "]的NS服务？", "提示", {}).then(() => {
+                Refresh({ id: row.Id }).then(res => {
 
-                if (res.data && res.data.success) {
-                    this.$message({
-                        message: res.data.msg || "刷新成功!",
-                        type: "error"
-                    });
-                } else {
-                    this.$message({
-                        message: res.data.msg || "刷新失败!",
-                        type: "error"
-                    });
-                }
-            })
+                    if (res.data && res.data.success) {
+                        this.$message({
+                            message: res.data.msg || "刷新成功!",
+                            type: "error"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "刷新失败!",
+                            type: "error"
+                        });
+                    }
+                })
+            });
+
         },
         handleBind(row) {
 
@@ -379,7 +385,7 @@ export default {
         },
         handleLog(row) {
             this.tableLog = []
-            GetLog({ id: row.Id }).then(res => {
+            GetLog({ id: row.Id, pageSize: this.pageLog.pageSize, page: this.pageLog.pageIndex }).then(res => {
                 if (res.data && res.data.success) {
                     this.showLog = true
                     this.tableLog = res.data.response.data
@@ -412,17 +418,22 @@ export default {
         selsChange(sels) {
             this.sels = sels;
         },
-        handleCurrentChange(index) {
-            this.page.pageIndex = index;
-            this.handleSearch();
+        handleCurrentChangeLog(index) {
+            this.pageLog.pageIndex = index;
+            this.handleLog();
         },
         handleSizeChange(size) {
             this.page.pageIndex = 1;
             this.page.pageSize = size;
             this.handleSearch();
         },
+        handleSizeChangeLog(size) {
+            this.pageLog.pageIndex = 1;
+            this.pageLog.pageSize = size;
+            this.handleLog();
+        },
         handleSearch() {
-            getNightscout({ page: this.page.pageIndex, key: this.para.name, pageSize: this.page.pageSize })
+            getNightscout({ key: this.para.name, pageSize: this.page.pageSize, page: this.page.pageIndex })
                 .then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.response.data;
@@ -431,7 +442,7 @@ export default {
                 });
         },
         handleDel(row) {
-            this.$confirm("确认删除吗[" + row.name + "]？", "提示", {}).then(() => {
+            this.$confirm("确认删除[" + row.name + "]的NS服务吗？", "提示", {}).then(() => {
                 delNightscout({ id: row.Id }).then(res => {
                     if (res.data.success) {
                         this.handleSearch();
