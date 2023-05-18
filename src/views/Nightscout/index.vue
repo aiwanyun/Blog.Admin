@@ -16,7 +16,7 @@
         </el-col>
 
         <!--列表-->
-        <el-table :data="tableData" highlight-current-row v-loading="listLoading" @selection-change="selsChange"
+        <el-table :data="tableData" highlight-current-row @selection-change="selsChange"
             style="width: 100%;">
             <el-table-column type="selection" width="60"></el-table-column>
             <el-table-column type="index" width="80"></el-table-column>
@@ -41,12 +41,12 @@
             <el-table-column show-overflow-tooltip prop="serviceName" label="服务名称" width="200"></el-table-column>
             <el-table-column show-overflow-tooltip prop="isRefresh" label="强制刷新" width="90">
                 <template slot-scope="scope">
-                    <el-tag>{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
+                    <el-tag :type="scope.row.isRefresh ? 'warning' : ''">{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
                 </template>
             </el-table-column>
             <el-table-column show-overflow-tooltip prop="isConnection" label="是否接入" width="90">
                 <template slot-scope="scope">
-                    <el-tag>{{ scope.row.isConnection ? '是' : '否' }}</el-tag>
+                    <el-tag :type="scope.row.isConnection ? 'success' : ''">{{ scope.row.isConnection ? '是' : '否' }}</el-tag>
                 </template>
             </el-table-column>
 
@@ -56,7 +56,7 @@
                     {{ (scope.row.backupurl ? 'https://' : '') }}{{ scope.row.backupurl }}
                 </template>
             </el-table-column>
-            
+
             <el-table-column show-overflow-tooltip prop="remark" label="备注" width="120"></el-table-column>
             <el-table-column show-overflow-tooltip prop="tel" label="电话" width="120"></el-table-column>
 
@@ -241,7 +241,6 @@ export default {
             para: {
 
             },
-            listLoading: false,
             tableData: [],
             tableUser: [],
             tableLog: [],
@@ -379,10 +378,10 @@ export default {
             })
         },
         handleLog(row) {
-            this.showLog = true
             this.tableLog = []
             GetLog({ id: row.Id }).then(res => {
                 if (res.data && res.data.success) {
+                    this.showLog = true
                     this.tableLog = res.data.response.data
                 } else {
                     this.$message({
@@ -393,8 +392,6 @@ export default {
             })
 
         },
-
-
         getShowSpan() {
             if (this.showCount == 1) return 24
             if (this.showCount == 2) return 12
@@ -425,10 +422,8 @@ export default {
             this.handleSearch();
         },
         handleSearch() {
-            this.listLoading = true;
             getNightscout({ page: this.page.pageIndex, key: this.para.name, pageSize: this.page.pageSize })
                 .then(res => {
-                    this.listLoading = false;
                     if (res.data.success) {
                         this.tableData = res.data.response.data;
                         this.page.pageTotal = res.data.response.dataCount
@@ -436,7 +431,7 @@ export default {
                 });
         },
         handleDel(row) {
-            this.$confirm("确认删除吗？", "提示", {}).then(() => {
+            this.$confirm("确认删除吗[" + row.name + "]？", "提示", {}).then(() => {
                 delNightscout({ id: row.Id }).then(res => {
                     if (res.data.success) {
                         this.handleSearch();
