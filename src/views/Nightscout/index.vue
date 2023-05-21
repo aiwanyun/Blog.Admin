@@ -72,11 +72,13 @@
                                 @click.native="handleBind(scope.row)">获取绑定二维码</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-close-notification"
                                 @click.native="handleUnbind(scope.row)">解除绑定</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-s-order"
-                                @click.native="handleLog(scope.row)">操作日志</el-dropdown-item>
 
                             <el-dropdown-item icon="el-icon-refresh"
                                 @click.native="handleRefresh(scope.row)">强制刷新</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-s-open"
+                                @click.native="handleReset(scope.row)">重置数据</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-s-order"
+                                @click.native="handleLog(scope.row)">操作日志</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete"
                                 @click.native="handleDel(scope.row)">删除</el-dropdown-item>
                         </el-dropdown-menu>
@@ -234,7 +236,8 @@ import {
     Refresh,
     GetWeChatCode,
     UnbindWeChat,
-    GetLog
+    GetLog,
+    Reset
 } from "../../api/api";
 import QRCode from "qrcode";
 export default {
@@ -335,6 +338,24 @@ export default {
         this.handleSearch();
     },
     methods: {
+        handleReset(row) {
+            this.$confirm("确定重置[" + row.name + "]的数据吗？", "提示", {}).then(() => {
+                Reset({ id: row.Id }).then(res => {
+
+                    if (res.data && res.data.success) {
+                        this.$message({
+                            message: res.data.msg || "重置成功!",
+                            type: "success"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "重置失败!",
+                            type: "error"
+                        });
+                    }
+                })
+            });
+        },
         handleRefresh(row) {
             this.$confirm("确认刷新[" + row.name + "]的NS服务？", "提示", {}).then(() => {
                 Refresh({ id: row.Id }).then(res => {
@@ -376,19 +397,22 @@ export default {
 
         },
         handleUnbind(row) {
-            UnbindWeChat({ id: row.Id }).then(res => {
-                if (res.data && res.data.success) {
-                    this.$message({
-                        message: "解绑成功!",
-                        type: "success"
-                    });
-                } else {
-                    this.$message({
-                        message: "解绑失败!",
-                        type: "error"
-                    });
-                }
-            })
+            this.$confirm("确定解除[" + row.name + "]的微信绑定吗？", "提示", {}).then(() => {
+                UnbindWeChat({ id: row.Id }).then(res => {
+                    if (res.data && res.data.success) {
+                        this.$message({
+                            message: res.data.msg || "解绑成功!",
+                            type: "success"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "解绑失败!",
+                            type: "error"
+                        });
+                    }
+                })
+            });
+
         },
         handleLog(row) {
             if (row) this.curRow = row

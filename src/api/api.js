@@ -569,3 +569,7 @@ export const UnbindWeChat = params => {
 export const GetLog = params => {
     return axios.get(`${base}/api/Nightscout/GetLog`, { params: params });
 };
+// 重置数据
+export const Reset = params => {
+    return axios.get(`${base}/api/Nightscout/Reset`, { params: params });
+};
