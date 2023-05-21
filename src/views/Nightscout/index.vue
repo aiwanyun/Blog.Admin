@@ -7,7 +7,7 @@
                     <el-input v-model="para.name" placeholder="标题/内容"></el-input>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="handleSearch">查询</el-button>
+                    <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
                     <el-button type="primary" @click="handleAdd">新增</el-button>
                     <el-button type="primary" @click="handleView(true)">预览</el-button>
                     <el-button type="primary" @click="handleView(false)">预览(备用)</el-button>
