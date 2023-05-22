@@ -424,7 +424,7 @@ export default {
                     this.pageLog.pageTotal = res.data.response.dataCount
                 } else {
                     this.$message({
-                        message: "获取失败!",
+                        message: res.data.msg || "获取失败!",
                         type: "error"
                     });
                 }
@@ -475,6 +475,11 @@ export default {
                     if (res.data.success) {
                         this.tableData = res.data.response.data;
                         this.page.pageTotal = res.data.response.dataCount
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "获取失败!",
+                            type: "error"
+                        });
                     }
                 });
         },
@@ -484,8 +489,13 @@ export default {
                     if (res.data.success) {
                         this.handleSearch();
                         this.$message({
-                            message: "删除成功!",
+                            message: res.data.msg || "删除成功!",
                             type: "success"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "删除失败!",
+                            type: "error"
                         });
                     }
                 });
@@ -519,11 +529,16 @@ export default {
                                     this.editLoading = false;
                                     if (res.data.success) {
                                         this.$message({
-                                            message: "添加成功!",
+                                            message: res.data.msg || "添加成功!",
                                             type: "success"
                                         });
                                         this.handleSearch();
                                         this.editFormVisible = false;
+                                    } else {
+                                        this.$message({
+                                            message: res.data.msg || "添加失败!",
+                                            type: "error"
+                                        });
                                     }
 
                                 });
@@ -535,11 +550,16 @@ export default {
                                     this.editLoading = false;
                                     if (res.data.success) {
                                         this.$message({
-                                            message: "编辑成功!",
+                                            message: res.data.msg || "编辑成功!",
                                             type: "success"
                                         });
                                         this.handleSearch();
                                         this.editFormVisible = false;
+                                    } else {
+                                        this.$message({
+                                            message: res.data.msg || "编辑失败!",
+                                            type: "error"
+                                        });
                                     }
                                 });
                         }
