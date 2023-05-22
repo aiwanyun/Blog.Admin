@@ -2,7 +2,7 @@
     <section>
         <!--工具条-->
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-            <el-form :inline="true" :model="para" @submit.native.prevent>
+            <el-form :inline="true" :model="para" @submit.native.prevent style="margin-top: 10px;">
                 <el-form-item>
                     <el-input v-model="para.name" placeholder="标题/内容"></el-input>
                 </el-form-item>
@@ -11,6 +11,19 @@
                     <el-button type="primary" @click="handleAdd">新增</el-button>
                     <el-button type="primary" @click="handleView(true)">预览</el-button>
                     <el-button type="primary" @click="handleView(false)">预览(备用)</el-button>
+                </el-form-item>
+                <el-form-item>
+                    状态:
+                    <el-badge style="margin-left: 10px;" :key="item.name" v-for="(item, index) in summary.status"
+                        :value="item.count" class="item">
+                        <el-tag style="width: 60px;text-align: center;">{{ (item.name ? item.name : '未确认') }}</el-tag>
+                    </el-badge>
+                    来源:
+                    <el-badge style="margin-left: 10px;" :key="item.name"
+                        v-for="(item, index) in summary.resource" :value="item.count" class="item">
+                        <el-tag style="width: 60px;text-align: center;" type="info">{{ (item.name ? item.name : '未确认')
+                        }}</el-tag>
+                    </el-badge>
                 </el-form-item>
             </el-form>
         </el-col>
@@ -49,6 +62,9 @@
                     }}</el-tag>
                 </template>
             </el-table-column>
+
+            <el-table-column show-overflow-tooltip prop="status" label="状态" width="90"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="resource" label="来源" width="90"></el-table-column>
 
 
             <el-table-column show-overflow-tooltip prop="backupurl" label="备用访问" width="350">
@@ -138,20 +154,14 @@
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="设置后每次编辑都会重启NS服务" placement="top">
                     <el-form-item label="强制刷新" prop="isRefresh">
-
                         <el-radio v-model="editForm.isRefresh" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isRefresh" :label="false">否</el-radio>
-
                     </el-form-item>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="设置后绑定微信后就可以推送了,需要强制刷新一次" placement="top">
                     <el-form-item label="是否接入" prop="isConnection">
-
-
                         <el-radio v-model="editForm.isConnection" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isConnection" :label="false">否</el-radio>
-
-
                     </el-form-item>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="不需要额外添加https否则会出问题" placement="top">
@@ -161,6 +171,24 @@
                         </el-input>
                     </el-form-item>
                 </el-tooltip>
+                <el-form-item label="状态" prop="status">
+                    <el-select v-model="editForm.status" placeholder="请选择状态">
+                        <el-option label="未启用" value="未启用"></el-option>
+                        <el-option label="试用中" value="试用中"></el-option>
+                        <el-option label="已付费" value="已付费"></el-option>
+                        <el-option label="已到期" value="已到期"></el-option>
+                        <el-option label="未确认" value="未确认"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="来源" prop="resource">
+                    <el-select clearable v-model="editForm.resource" placeholder="请选择来源">
+                        <el-option label="自来" value="自来"></el-option>
+                        <el-option label="推广" value="推广"></el-option>
+                        <el-option label="介绍" value="介绍"></el-option>
+                        <el-option label="分成" value="分成"></el-option>
+                        <el-option label="未确认" value="未确认"></el-option>
+                    </el-select>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -237,7 +265,8 @@ import {
     GetWeChatCode,
     UnbindWeChat,
     GetLog,
-    Reset
+    Reset,
+    GetSummary
 } from "../../api/api";
 import QRCode from "qrcode";
 export default {
@@ -251,6 +280,10 @@ export default {
             tableData: [],
             tableUser: [],
             tableLog: [],
+            summary: {
+                status: [],
+                resource: []
+            },
             sels: [],
             page: {
                 pageSize: 10,
@@ -281,7 +314,10 @@ export default {
                 ],
                 passwd: [
                     { required: true, message: "密码不能为空", trigger: "blur" }
-                ]
+                ],
+                status: [
+                    { required: true, message: "状态不能为空", trigger: "blur" }
+                ],
             },
             pickerOptions: {
                 shortcuts: [
@@ -470,18 +506,34 @@ export default {
             this.handleLog();
         },
         handleSearch() {
+
             getNightscout({ key: this.para.name, pageSize: this.page.pageSize, page: this.page.pageIndex })
                 .then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.response.data;
                         this.page.pageTotal = res.data.response.dataCount
                     } else {
+                        this.tableData = []
                         this.$message({
                             message: res.data.msg || "获取失败!",
                             type: "error"
                         });
                     }
                 });
+            this.summary.status = []
+            this.summary.resource = []
+            GetSummary().then(res => {
+                if (res.data.success) {
+                    this.summary.status = res.data.response.status
+                    this.summary.resource = res.data.response.resource
+                } else {
+                    this.$message({
+                        message: res.data.msg || "统计数据获取失败!",
+                        type: "error"
+                    });
+                }
+
+            })
         },
         handleDel(row) {
             this.$confirm("确认删除[" + row.name + "]的NS服务吗？", "提示", {}).then(() => {
