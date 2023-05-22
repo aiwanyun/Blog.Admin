@@ -16,12 +16,12 @@
                     状态:
                     <el-badge style="margin-left: 10px;" :key="item.name" v-for="(item, index) in summary.status"
                         :value="item.count" class="item">
-                        <el-tag style="width: 60px;text-align: center;">{{ (item.name ? item.name : '未确认') }}</el-tag>
+                        <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;">{{ (item.name ? item.name : '未确认') }}</el-tag>
                     </el-badge>
                     来源:
                     <el-badge style="margin-left: 10px;" :key="item.name"
                         v-for="(item, index) in summary.resource" :value="item.count" class="item">
-                        <el-tag style="width: 60px;text-align: center;" type="info">{{ (item.name ? item.name : '未确认')
+                        <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;" type="info">{{ (item.name ? item.name : '未确认')
                         }}</el-tag>
                     </el-badge>
                 </el-form-item>
@@ -177,7 +177,6 @@
                         <el-option label="试用中" value="试用中"></el-option>
                         <el-option label="已付费" value="已付费"></el-option>
                         <el-option label="已到期" value="已到期"></el-option>
-                        <el-option label="未确认" value="未确认"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="来源" prop="resource">
@@ -498,6 +497,11 @@ export default {
         handleSizeChange(size) {
             this.page.pageIndex = 1;
             this.page.pageSize = size;
+            this.handleSearch();
+        },
+        handleTag(key) {
+            this.para.name =key;
+            this.page.pageIndex = 1; 
             this.handleSearch();
         },
         handleSizeChangeLog(size) {
