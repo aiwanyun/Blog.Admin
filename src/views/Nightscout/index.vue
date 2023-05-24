@@ -4,7 +4,7 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="para" @submit.native.prevent style="margin-top: 10px;">
                 <el-form-item>
-                    <el-input v-model="para.name" placeholder="标题/内容"></el-input>
+                    <el-input clearable v-model="para.name" placeholder="标题/内容"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
@@ -13,16 +13,18 @@
                     <el-button type="primary" @click="handleView(false)">预览(备用)</el-button>
                 </el-form-item>
                 <el-form-item>
-                    状态:
-                    <el-badge style="margin-left: 10px;" :key="item.name" v-for="(item, index) in summary.status"
-                        :value="item.count" class="item">
-                        <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;">{{ (item.name ? item.name : '未确认') }}</el-tag>
+                    <label>状态:</label>
+                    <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '20px' }" :key="item.name"
+                        v-for="(item, index) in summary.status" :value="item.count" class="item">
+                        <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;">{{
+                            (item.name ? item.name : '未确认') }}</el-tag>
                     </el-badge>
-                    来源:
-                    <el-badge style="margin-left: 10px;" :key="item.name"
+                    <label style="margin-left: 10px;">来源:</label>
+                    <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '20px' }" :key="item.name"
                         v-for="(item, index) in summary.resource" :value="item.count" class="item">
-                        <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;" type="info">{{ (item.name ? item.name : '未确认')
-                        }}</el-tag>
+                        <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;"
+                            type="info">{{ (item.name ? item.name : '未确认')
+                            }}</el-tag>
                     </el-badge>
                 </el-form-item>
             </el-form>
@@ -274,7 +276,7 @@ export default {
     data() {
         return {
             para: {
-
+                name: ''
             },
             tableData: [],
             tableUser: [],
@@ -500,8 +502,8 @@ export default {
             this.handleSearch();
         },
         handleTag(key) {
-            this.para.name =key;
-            this.page.pageIndex = 1; 
+            this.para.name = key;
+            this.page.pageIndex = 1;
             this.handleSearch();
         },
         handleSizeChangeLog(size) {
