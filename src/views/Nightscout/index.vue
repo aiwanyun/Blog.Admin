@@ -4,7 +4,7 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="para" @submit.native.prevent style="margin-top: 10px;">
                 <el-form-item>
-                    <el-input clearable v-model="para.name" placeholder="标题/内容"></el-input>
+                    <el-input clearable v-model="para.name" placeholder="标题/内容" @keyup.enter.native.prevent="handleCurrentChange(1)"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
