@@ -64,6 +64,12 @@
                     }}</el-tag>
                 </template>
             </el-table-column>
+            <el-table-column show-overflow-tooltip prop="isKeepPush" label="持续推送" width="90">
+                <template slot-scope="scope">
+                    <el-tag :type="scope.row.isKeepPush ? 'success' : ''">{{ scope.row.isKeepPush ? '是' : '否'
+                    }}</el-tag>
+                </template>
+            </el-table-column>
 
             <el-table-column show-overflow-tooltip prop="status" label="状态" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="resource" label="来源" width="90"></el-table-column>
@@ -166,6 +172,13 @@
                         <el-radio v-model="editForm.isConnection" :label="false">否</el-radio>
                     </el-form-item>
                 </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="设置持续推送后,需要强制刷新一次" placement="top">
+                    <el-form-item label="持续推送" prop="isKeepPush">
+                        <el-radio v-model="editForm.isKeepPush" :label="true">是</el-radio>
+                        <el-radio v-model="editForm.isKeepPush" :label="false">否</el-radio>
+                    </el-form-item>
+                </el-tooltip>
+                
                 <el-tooltip class="item" effect="dark" content="不需要额外添加https否则会出问题" placement="top">
                     <el-form-item label="备用访问" prop="backupurl">
                         <el-input v-model="editForm.backupurl">
