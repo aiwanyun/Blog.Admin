@@ -70,6 +70,12 @@
                     }}</el-tag>
                 </template>
             </el-table-column>
+            <el-table-column show-overflow-tooltip prop="isKeepPush" label="是否绑定" width="90">
+                <template slot-scope="scope">
+                    <el-tag :type="scope.row.isBindWeChat ? 'success' : ''">{{ scope.row.isBindWeChat ? '是' : '否'
+                    }}</el-tag>
+                </template>
+            </el-table-column>
 
             <el-table-column show-overflow-tooltip prop="status" label="状态" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="resource" label="来源" width="90"></el-table-column>
