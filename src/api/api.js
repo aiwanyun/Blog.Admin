@@ -577,4 +577,9 @@ export const Reset = params => {
 export const GetSummary = params => {
     return axios.get(`${base}/api/Nightscout/GetSummary`, { params: params });
 };
+// 获取插件
+export const GetPlugins = params => {
+    return axios.get(`${base}/api/Nightscout/GetPlugins`, { params: params });
+};
+
 

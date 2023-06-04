@@ -4,7 +4,8 @@
         <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
             <el-form :inline="true" :model="para" @submit.native.prevent style="margin-top: 10px;">
                 <el-form-item>
-                    <el-input clearable v-model="para.name" placeholder="标题/内容" @keyup.enter.native.prevent="handleCurrentChange(1)"></el-input>
+                    <el-input clearable v-model="para.name" placeholder="标题/内容"
+                        @keyup.enter.native.prevent="handleCurrentChange(1)"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
@@ -184,7 +185,7 @@
                         <el-radio v-model="editForm.isKeepPush" :label="false">否</el-radio>
                     </el-form-item>
                 </el-tooltip>
-                
+
                 <el-tooltip class="item" effect="dark" content="不需要额外添加https否则会出问题" placement="top">
                     <el-form-item label="备用访问" prop="backupurl">
                         <el-input v-model="editForm.backupurl">
@@ -209,6 +210,15 @@
                         <el-option label="未确认" value="未确认"></el-option>
                     </el-select>
                 </el-form-item>
+
+                <el-form-item label="启用组件" prop="plugins_arr">
+                    <el-select filterable style="width: 100%;" clearable multiple v-model="editForm.plugins_arr"
+                        placeholder="请选择要启用的组件">
+                        <el-option :key="item.key" v-for="item in plugins" :label="item.name + '-' + item.key"
+                            :value="item.key"></el-option>
+                    </el-select>
+                </el-form-item>
+
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -286,7 +296,8 @@ import {
     UnbindWeChat,
     GetLog,
     Reset,
-    GetSummary
+    GetSummary,
+    GetPlugins
 } from "../../api/api";
 import QRCode from "qrcode";
 export default {
@@ -338,6 +349,9 @@ export default {
                 status: [
                     { required: true, message: "状态不能为空", trigger: "blur" }
                 ],
+                plugins_arr: [
+                    { required: true, message: "至少要选择一个组件", trigger: "blur" }
+                ],
             },
             pickerOptions: {
                 shortcuts: [
@@ -387,13 +401,27 @@ export default {
             isNew: true,
             showBind: false,
             showLog: false,
-            curRow: {}
+            curRow: {},
+            plugins: []
         };
     },
     created() {
         this.handleSearch();
+        this.GetPlugins();
     },
     methods: {
+        GetPlugins() {
+            GetPlugins().then(res => {
+                if (res.data.success) {
+                    this.plugins = res.data.response
+                } else {
+                    this.$message({
+                        message: res.data.msg || "插件获取失败!",
+                        type: "error"
+                    });
+                }
+            })
+        },
         handleReset(row) {
             this.$confirm("确定重置[" + row.name + "]的数据吗？", "提示", {}).then(() => {
                 Reset({ id: row.Id }).then(res => {
@@ -580,17 +608,22 @@ export default {
         },
         handleEdit(row) {
             //编辑
-            this.editFormVisible = true;
             this.editType = "编辑";
             this.editForm = Object.assign({}, row);
+            if (row.plugins) {
+                this.$set(this.editForm, "plugins_arr", JSON.parse(row.plugins))
+            } else {
+                this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
+            }
+            this.editFormVisible = true;
 
         },
         handleAdd() {
             //新增
-            this.editFormVisible = true;
             this.editType = "添加";
             this.editForm = Object.assign({});
-
+            this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
+            this.editFormVisible = true;
         },
         editSubmit() {
             //保存
@@ -598,9 +631,8 @@ export default {
                 if (valid) {
                     this.$confirm("确认提交吗？", "提示", {}).then(() => {
                         this.editLoading = true;
+                        this.editForm.plugins = JSON.stringify(this.editForm.plugins_arr)
                         if (this.editType == "添加") {
-                            //console.log(this.editForm);
-                            //var postPara = this.editForm;
                             addNightscout(this.editForm)
                                 .then(res => {
                                     this.editLoading = false;
@@ -620,8 +652,6 @@ export default {
 
                                 });
                         } else if (this.editType == "编辑") {
-                            //console.log(this.editForm);
-                            //var postPara = this.editForm;
                             updateNightscout(this.editForm)
                                 .then(res => {
                                     this.editLoading = false;
