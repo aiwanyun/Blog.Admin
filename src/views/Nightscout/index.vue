@@ -54,6 +54,11 @@
             <el-table-column show-overflow-tooltip prop="passwd" label="密码" width="150"></el-table-column>
             <el-table-column show-overflow-tooltip prop="instanceIP" label="实例IP" width="120"></el-table-column>
             <el-table-column show-overflow-tooltip prop="serviceName" label="服务名称" width="200"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="serverId" label="服务器" width="100">
+                <template slot-scope="scope">{{
+                    getServerName(scope.row.serverId)
+                }}</template>
+            </el-table-column>
             <el-table-column show-overflow-tooltip prop="isRefresh" label="强制刷新" width="90">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.isRefresh ? 'warning' : ''">{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
@@ -152,6 +157,13 @@
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="editForm.remark" auto-complete="off"></el-input>
+                </el-form-item>
+
+                <el-form-item label="部署服务器" prop="serverId">
+                    <el-select v-model="editForm.serverId" placeholder="请选择">
+                        <el-option v-for="item in nsServer" :key="item.Id" :label="item.serverName" :value="item.Id">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
                     <el-form-item label="实例IP" prop="instanceIP">
@@ -297,7 +309,8 @@ import {
     GetLog,
     Reset,
     GetSummary,
-    GetPlugins
+    GetPlugins,
+    getAllNsServer
 } from "../../api/api";
 import QRCode from "qrcode";
 export default {
@@ -352,6 +365,9 @@ export default {
                 plugins_arr: [
                     { required: true, message: "至少要选择一个组件", trigger: "blur" }
                 ],
+                serverId: [
+                    { required: true, message: "部署服务器不能为空", trigger: "blur" }
+                ]
             },
             pickerOptions: {
                 shortcuts: [
@@ -402,14 +418,28 @@ export default {
             showBind: false,
             showLog: false,
             curRow: {},
-            plugins: []
+            plugins: [],
+            nsServer: []
         };
     },
     created() {
         this.handleSearch();
         this.GetPlugins();
+        this.getAllNsServer();
     },
     methods: {
+        getServerName(id) {
+            let row = this.nsServer.find(t => t.Id === id)
+            if (row) return row.serverName
+            return "";
+        },
+        getAllNsServer() {
+            getAllNsServer().then(res => {
+                if (res.data.success) {
+                    this.nsServer = res.data.response
+                }
+            })
+        },
         GetPlugins() {
             GetPlugins().then(res => {
                 if (res.data.success) {

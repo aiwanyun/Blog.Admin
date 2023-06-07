@@ -582,4 +582,24 @@ export const GetPlugins = params => {
     return axios.get(`${base}/api/Nightscout/GetPlugins`, { params: params });
 };
 
+//获取ns服务器
+export const getNsServer = params => {
+    return axios.get(`${base}/api/Nightscout/getNsServer`, { params: params });
+};
+export const getAllNsServer = params => {
+    return axios.get(`${base}/api/Nightscout/getAllNsServer`, { params: params });
+};
+
+//删除ns服务器
+export const delNsServer= params => {
+    return axios.put(`${base}/api/Nightscout/delNsServer`, params);
+};
+//更新ns服务器
+export const updateNsServer = params => {
+    return axios.put(`${base}/api/Nightscout/updateNsServer`, params);
+};
+//添加ns服务器
+export const addNsServer = params => {
+    return axios.post(`${base}/api/Nightscout/addNsServer`, params);
+};
 
