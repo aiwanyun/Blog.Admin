@@ -117,6 +117,12 @@
                                 @click.native="handleLog(scope.row)">操作日志</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete"
                                 @click.native="handleDel(scope.row)">删除</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-document-copy"
+                                @click.native="copy('https://' + scope.row.url)">复制url地址</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-document-copy"
+                                @click.native="copy('https://' + scope.row.passwd + '@' + scope.row.url + '/api/v1')">复制api地址</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-document-copy"
+                                @click.native="copy(scope.row.passwd)">复制密码</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
@@ -160,22 +166,22 @@
                 </el-form-item>
 
                 <el-form-item label="部署服务器" prop="serverId">
-                    <el-select v-model="editForm.serverId" placeholder="请选择">
+                    <el-select :disabled="editType == '编辑'" v-model="editForm.serverId" placeholder="请选择">
                         <el-option v-for="item in nsServer" :key="item.Id" :label="item.serverName" :value="item.Id">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
+                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placeholder="自动生成" placement="top">
                     <el-form-item label="实例IP" prop="instanceIP">
 
-                        <el-input v-model="editForm.instanceIP" auto-complete="off"></el-input>
+                        <el-input :disabled="true" v-model="editForm.instanceIP" auto-complete="off"></el-input>
 
                     </el-form-item>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
+                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placeholder="自动生成" placement="top">
                     <el-form-item label="服务名称" prop="serviceName">
 
-                        <el-input v-model="editForm.serviceName" auto-complete="off"></el-input>
+                        <el-input :disabled="true" v-model="editForm.serviceName" auto-complete="off"></el-input>
 
                     </el-form-item>
                 </el-tooltip>
@@ -428,6 +434,21 @@ export default {
         this.getAllNsServer();
     },
     methods: {
+        copy(data) {
+            let elInput = document.createElement('input')
+            elInput.value = data
+            document.body.appendChild(elInput)
+            // 选择对象
+            elInput.select()
+            console.log(elInput, elInput.value)
+            // 执行浏览器复制命令
+            document.execCommand("Copy")
+            elInput.remove()
+            this.$message({
+                message: "复制成功！",
+                type: "success"
+            });
+        },
         getServerName(id) {
             let row = this.nsServer.find(t => t.Id === id)
             if (row) return row.serverName
