@@ -36,6 +36,8 @@
       <el-table-column prop="curServiceSerial" label="当前服务序列" width sortable></el-table-column> 
       <el-table-column prop="mongoIp" label="数据库地址" width sortable></el-table-column> 
       <el-table-column prop="mongoPort" label="数据库端口" width sortable></el-table-column> 
+      <el-table-column prop="mongoLoginName" label="数据库账号" width sortable></el-table-column> 
+      <el-table-column prop="mongoLoginPassword" label="数据库密码" width sortable></el-table-column> 
       <el-table-column prop="remark" label="备注" width sortable></el-table-column> 
       
       
@@ -100,6 +102,12 @@
         </el-form-item> 
         <el-form-item label="数据库端口" prop="mongoPort">
           <el-input v-model="editForm.mongoPort" auto-complete="off"></el-input>
+        </el-form-item> 
+        <el-form-item label="数据库账号" prop="mongoLoginName">
+          <el-input v-model="editForm.mongoLoginName" auto-complete="off"></el-input>
+        </el-form-item> 
+        <el-form-item label="数据库密码" prop="mongoLoginPassword">
+          <el-input v-model="editForm.mongoLoginPassword" auto-complete="off"></el-input>
         </el-form-item> 
         <el-form-item label="备注" prop="remark">
           <el-input v-model="editForm.remark" auto-complete="off"></el-input>
