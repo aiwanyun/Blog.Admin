@@ -168,8 +168,8 @@ const ToLogin = params => {
         applicationUserManager.login();
     } else {
         router.replace({
-            path: "/login",
-            query: { redirect: router.currentRoute.fullPath }
+            path: "/login?redirect="+router.currentRoute.fullPath ,
+            // query: { redirect: router.currentRoute.fullPath }
         });
         //window.location.reload()
     }
