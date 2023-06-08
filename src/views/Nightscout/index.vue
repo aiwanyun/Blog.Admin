@@ -54,9 +54,9 @@
             <el-table-column show-overflow-tooltip prop="passwd" label="密码" width="150"></el-table-column>
             <el-table-column show-overflow-tooltip prop="instanceIP" label="实例IP" width="120"></el-table-column>
             <el-table-column show-overflow-tooltip prop="serviceName" label="服务名称" width="200"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="serverId" label="服务器" width="100">
+            <el-table-column show-overflow-tooltip prop="serverId" label="服务器" width="150">
                 <template slot-scope="scope">{{
-                    getServerName(scope.row.serverId)
+                    getServerName(scope.row)
                 }}</template>
             </el-table-column>
             <el-table-column show-overflow-tooltip prop="isRefresh" label="强制刷新" width="90">
@@ -449,10 +449,17 @@ export default {
                 type: "success"
             });
         },
-        getServerName(id) {
-            let row = this.nsServer.find(t => t.Id === id)
-            if (row) return row.serverName
-            return "";
+        getServerName(row) {
+            let id = row.serverId
+            let findRow = this.nsServer.find(t => t.Id === id)
+            let tag = "";
+            if (findRow) {
+                tag += findRow.serverName
+                if (row.exposedPort > 0) {
+                    tag += "(" + row.exposedPort + ")";
+                }
+            }
+            return tag;
         },
         getAllNsServer() {
             getAllNsServer().then(res => {
