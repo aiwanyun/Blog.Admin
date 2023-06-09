@@ -49,6 +49,12 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     response => {
         if (loadingInstance) loadingInstance.close();
+        if (response.data && response.data.success === false && response.config && (response.config.showError === undefined || response.config.showError === true) ){
+            Vue.prototype.$message({
+                message: response.data.msg || response.data.msgDev,
+                type: 'error'
+            });
+        }
         return response;
     },
     error => {
