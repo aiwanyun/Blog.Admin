@@ -167,21 +167,24 @@
 
                 <el-form-item label="部署服务器" prop="serverId">
                     <el-select :disabled="editType == '编辑'" v-model="editForm.serverId" placeholder="请选择">
-                        <el-option v-for="item in nsServer" :key="item.Id" :label="item.serverName" :value="item.Id">
+                        <el-option v-for="item in nsServer" :key="item.Id" :label="item.serverName + '(' + item.count + ')'"
+                            :value="item.Id">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placeholder="自动生成" placement="top">
+                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
                     <el-form-item label="实例IP" prop="instanceIP">
 
-                        <el-input :disabled="true" v-model="editForm.instanceIP" auto-complete="off"></el-input>
+                        <el-input :disabled="true" v-model="editForm.instanceIP" auto-complete="off"
+                            placeholder="自动生成"></el-input>
 
                     </el-form-item>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placeholder="自动生成" placement="top">
+                <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
                     <el-form-item label="服务名称" prop="serviceName">
 
-                        <el-input :disabled="true" v-model="editForm.serviceName" auto-complete="off"></el-input>
+                        <el-input :disabled="true" v-model="editForm.serviceName" auto-complete="off"
+                            placeholder="自动生成"></el-input>
 
                     </el-form-item>
                 </el-tooltip>
@@ -666,6 +669,7 @@ export default {
         },
         handleEdit(row) {
             //编辑
+            this.getAllNsServer();
             this.editType = "编辑";
             this.editForm = Object.assign({}, row);
             if (row.plugins) {
@@ -678,8 +682,9 @@ export default {
         },
         handleAdd() {
             //新增
+            this.getAllNsServer();
             this.editType = "添加";
-            this.editForm = Object.assign({});
+            this.editForm = Object.assign({ isRefresh: false, isConnection: false, isKeepPush: false });
             this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
             this.editFormVisible = true;
         },
