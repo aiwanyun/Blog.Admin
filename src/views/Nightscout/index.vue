@@ -120,9 +120,11 @@
                             <el-dropdown-item icon="el-icon-document-copy"
                                 @click.native="copy('https://' + scope.row.url)">复制url地址</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
+                                @click.native="copy(scope.row.passwd)">复制密码</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-document-copy"
                                 @click.native="copy('https://' + scope.row.passwd + '@' + scope.row.url + '/api/v1')">复制api地址</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
-                                @click.native="copy(scope.row.passwd)">复制密码</el-dropdown-item>
+                                @click.native="copy('https://' + scope.row.url + '/api/v1/entries')">复制entries地址</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
