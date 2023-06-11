@@ -198,8 +198,10 @@ export default {
 
       this.editForm.url = this.curSelectMedia.url
       this.editForm.media_id = this.curSelectMedia.media_id
-      this.editForm.title = this.curSelectMedia.name
-      this.editForm.description = this.curSelectMedia.description
+      if (this.editForm.media_type == 'video') {
+        this.editForm.title = this.curSelectMedia.name
+        this.editForm.description = this.curSelectMedia.description
+      }
       this.visibleMedia = false
     },
     handleMedia() {
