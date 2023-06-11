@@ -12,7 +12,11 @@
       <el-table-column prop="publicAccount" label="微信公众号ID" width sortable></el-table-column>
       <el-table-column prop="publicNick" label="微信公众名称" width sortable></el-table-column>
 
-      <el-table-column prop="isFocusReply" label="是否关注回复" width sortable></el-table-column>
+      <el-table-column prop="isFocusReply" label="是否关注回复" width sortable>
+        <template slot-scope="scope">
+          {{ (scope.row.isFocusReply ? '是' : '否') }}
+        </template>
+      </el-table-column>
       <el-table-column prop="replyType" label="回复类型" width sortable></el-table-column>
       <el-table-column prop="replyText" label="回复文本" width sortable></el-table-column>
       <el-table-column prop="replyID" label="回复媒体ID" width sortable></el-table-column>
@@ -37,7 +41,7 @@
     </el-col>
     <!--编辑界面-->
     <el-dialog :title="editType" :visible.sync="editFormVisible" v-model="editFormVisible" :close-on-click-modal="false">
-      <el-form :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm">
+      <el-form :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm" label-position="top">
         <el-form-item label="微信公众号ID" prop="publicAccount">
           <el-input v-model="editForm.publicAccount" auto-complete="off"
             :disabled="editType == 'edit' ? true : false"></el-input>
@@ -82,7 +86,7 @@
     <!-- 编辑关注 -->
     <el-dialog :title="editType" :visible.sync="editFocusVisible" v-model="editFocusVisible"
       :close-on-click-modal="false">
-      <el-form :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm">
+      <el-form :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm" label-position="top">
         <el-form-item label="微信公众号ID" prop="publicAccount">
           <el-input v-model="editForm.publicAccount" auto-complete="off" :disabled="true"></el-input>
         </el-form-item>
@@ -115,16 +119,20 @@
             </el-col>
           </el-row>
           <el-row :gutter="10">
-            <el-col style="width: calc(100% - 170px);">
-              <el-input v-model="editForm.replyID" type="textarea" auto-complete="off" :disabled="true"></el-input>
-            </el-col>
-            <el-col style="width: 60px;">
+            <el-col :span="1.5">
               <el-upload class="upload-demo" action="#" :before-upload="beforeUpload">
                 <el-link type="primary">新上传</el-link>
               </el-upload>
             </el-col>
-            <el-col style="width: 80px;">
+            <el-col :span="1.5">
               <el-link type="primary" @click="handleMedia">选择</el-link>
+            </el-col>
+          </el-row>
+          <el-row :gutter="10">
+
+
+            <el-col>
+              <el-input v-model="editForm.replyID" type="textarea" :rows="5" auto-complete="off" :disabled="true"></el-input>
             </el-col>
           </el-row>
         </el-form-item>
@@ -142,9 +150,9 @@
     <el-dialog title="素材选择" :visible.sync="visibleMedia" :close-on-click-modal="false" append-to-body>
 
       <el-table :data="mediaList" style="width: 100%" highlight-current-row @current-change="handleSelectMedia">
-        <el-table-column prop="name" label="名称" min-width="100" show-overflow-tooltip>
+        <el-table-column prop="name" label="名称" min-width="250" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column prop="url" label="地址" width="100" show-overflow-tooltip>
+        <el-table-column prop="url" label="地址" width="150" show-overflow-tooltip>
         </el-table-column>
         <el-table-column prop="description" label="描述" width="100" show-overflow-tooltip>
         </el-table-column>

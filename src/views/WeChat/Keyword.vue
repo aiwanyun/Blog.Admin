@@ -1,25 +1,43 @@
 <template>
   <section>
     <!--工具条-->
-
-
-
-    <el-form :inline="true" @submit.native.prevent>
-      <el-form-item>
+    <el-row :gutter="10">
+      <el-col :span="1.5">
         <el-select v-model="selectWeChat" placeholder="请选择要操作的公众号" @change="handleSelectWeChat">
           <el-option v-for="item in wechats" :key="item.value" :label="item.label" :value="item.value">
             <span style="float: left">{{ item.label }}</span>
             <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
           </el-option>
         </el-select>
+      </el-col>
+      <el-col :span="1.5">
+        <el-input v-model="filters.name" auto-complete="off" placeholder="请输入搜索关键词" style="width: 150px;"></el-input>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" :disabled="selectWeChat == ''" @click="handleSearch">查询</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" :disabled="selectWeChat == ''" @click="handleAdd">新增</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="primary" :disabled="selectWeChat == ''" @click="handleEdit">编辑</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="danger" :disabled="selectWeChat == ''" @click="handleDel">删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button type="danger" :disabled="selectWeChat == '' || sels.length === 0" @click="batchRemove">批量删除</el-button>
+      </el-col>
+    </el-row>
+    <el-form :inline="true" @submit.native.prevent>
+      <el-form-item>
+
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" :disabled="selectWeChat == ''" @click="handleSearch">查询</el-button>
-        <el-button type="primary" :disabled="selectWeChat == ''" @click="handleAdd">新增</el-button>
-        <el-button type="primary" :disabled="selectWeChat == ''" @click="handleEdit">编辑</el-button>
-        <el-button type="primary" :disabled="selectWeChat == ''" @click="handleDel">删除</el-button>
-        <el-button type="primary" :disabled="selectWeChat == '' || sels.length === 0"
-          @click="batchRemove">批量删除</el-button>
+
+
+
+
       </el-form-item>
     </el-form>
 
@@ -71,20 +89,24 @@
             </el-col>
           </el-row>
           <el-row :gutter="10">
-            <el-col style="width: calc(100% - 170px);">
 
-              <el-input v-model="editForm.url" type="textarea" auto-complete="off" :disabled="true"></el-input>
-            </el-col>
-            <el-col style="width: 60px;">
+            <el-col :span="1.5">
               <el-upload class="upload-demo" action="#" :before-upload="beforeUpload">
                 <el-link type="primary">新上传</el-link>
               </el-upload>
             </el-col>
-            <el-col style="width: 80px;">
+            <el-col :span="1.5">
               <el-link type="primary" @click="handleMedia">选择</el-link>
-              <el-link v-show="editForm.url" type="primary" style="margin-left: 10px;">
+            </el-col>
+            <el-col :span="1.5">
+              <el-link v-show="editForm.url" type="primary">
                 <a target="_blank" :href="editForm.url" rel="noreferrer noopener nofollow">查看</a>
               </el-link>
+            </el-col>
+          </el-row>
+          <el-row :gutter="10">
+            <el-col>
+              <el-input v-model="editForm.url" :rows="5" type="textarea" auto-complete="off" :disabled="true"></el-input>
             </el-col>
           </el-row>
         </el-form-item>
@@ -293,13 +315,17 @@ export default {
         strOrderByFileds: '',
       };
       if (this.filters.name) {
-        para.conditions = 'key like ' + this.filters.name;
+        para.conditions = 'key contains ' + this.filters.name;
       }
       if (!this.selectWeChat) {
         this.$message.error("请选择要操作的公众号");
         return;
       }
-      para.conditions = 'publicAccount = ' + this.selectWeChat;
+      if (this.filters.name) {
+        para.conditions += ' & publicAccount = ' + this.selectWeChat;
+      }else{
+        para.conditions = 'publicAccount = ' + this.selectWeChat;
+      }
 
       getWeChatKeyword(para)
         .then(res => {

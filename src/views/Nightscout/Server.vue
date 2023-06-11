@@ -66,7 +66,7 @@
       v-model="editFormVisible"
       :close-on-click-modal="false"
     >
-      <el-form :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm">
+      <el-form :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm" label-position="top">
         <el-form-item label="服务器名称" prop="serverName">
           <el-input v-model="editForm.serverName" auto-complete="off"></el-input>
         </el-form-item>
