@@ -89,9 +89,9 @@
             <div class="menu_content">
               <span>菜单内容：</span>
               <el-radio-group v-model="tempObj.type">
-                <el-radio :label="'media_id'">发送素材</el-radio>
-                <el-radio :label="'view'">跳转链接</el-radio>
-                <el-radio :label="'click'">发送关键词</el-radio>  
+                <!-- <el-radio :label="'media_id'">发送素材</el-radio> -->
+                <el-radio :label="'click'">发送关键词</el-radio>
+                <el-radio :label="'view'">跳转链接</el-radio>  
                 <el-radio :label="'miniprogram'">小程序</el-radio>
                 <el-radio :label="'event'">事件功能</el-radio> 
               </el-radio-group> 

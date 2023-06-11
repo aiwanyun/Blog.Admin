@@ -389,6 +389,9 @@ export const addWeChatAccount = params => {
 export const updateWeChatAccount = params => {
     return axios.put(`${base}/api/WeChatConfig/put`, params);
 };
+export const updateWeChatAccountFocus = params => {
+    return axios.put(`${base}/api/WeChatConfig/putFocus`, params);
+};
 export const getWeChatTemplate = params => {
     return axios.get(`${base}/api/WeChat/GetTemplate`, { params: params });//获取模板
 };
@@ -431,6 +434,30 @@ export const pushTestMsg = params => {
 export const pushCardMsg = params => {
     return axios.post(`${base}/api/WeChat/PushCardMsg`, params);
 };
+
+export const getWeChatKeyword = params => {
+    return axios.get(`${base}/api/WeChatKeyword/get`, { params: params });
+};
+export const removeWeChatKeyword = params => {
+    return axios.delete(`${base}/api/WeChatKeyword/delete`, { params: params });
+};
+export const batchDeleteWeChatKeyword = params => {
+    return axios.delete(`${base}/api/WeChatKeyword/BatchDelete`, { params: params });
+};
+export const addWeWeChatKeyword = params => {
+    return axios.post(`${base}/api/WeChatKeyword/post`, params);
+};
+export const updateWeChatKeyword = params => {
+    return axios.put(`${base}/api/WeChatKeyword/put`, params);
+};
+
+export const UpdateWeChatFile = (id,type,params) => {
+    return axios.post(`${base}/api/WeChatKeyword/UpdateWeChatFile?id=${id}&type=${type}`, params);
+};
+export const GetWeChatMediaList = params => {
+    return axios.get(`${base}/api/WeChatKeyword/GetWeChatMediaList`, {params:params});
+};
+
 
 // 部门模块管理
 export const getDepartmentListPage = params => {
@@ -608,4 +635,5 @@ export const updateNsServer = params => {
 export const addNsServer = params => {
     return axios.post(`${base}/api/Nightscout/addNsServer`, params);
 };
+
 
