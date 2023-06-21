@@ -324,6 +324,7 @@ import {
     getAllNsServer
 } from "../../api/api";
 import QRCode from "qrcode";
+import util from "../../../util/date";
 export default {
     components: {},
     name: "Nightscout",
@@ -686,7 +687,12 @@ export default {
             //新增
             this.getAllNsServer();
             this.editType = "添加";
-            this.editForm = Object.assign({ isRefresh: false, isConnection: false, isKeepPush: false });
+            let date = new Date();
+
+            let startDate = util.formatDate.format(date, "yyyy-MM-dd");
+            date.setTime(date.getTime() + 3600 * 1000 * 24 * 365);
+            let endDate = util.formatDate.format(date, "yyyy-MM-dd");
+            this.editForm = Object.assign({ startTime: startDate, endTime: endDate, isRefresh: false, isConnection: false, isKeepPush: false, status: '未启用', resource: '未确认' });
             this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
             this.editFormVisible = true;
         },
