@@ -140,11 +140,11 @@
             :close-on-click-modal="false">
             <el-form :model="editForm" label-width="200px" label-position="top" :rules="editFormRules" ref="editForm">
                 <el-form-item label="名称" prop="name">
-                    <el-input v-model="editForm.name" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.name" placeholder="如不填写,则自动生成" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-tooltip class="item" effect="dark" content="不需要额外添加https否则会出问题" placement="top">
                     <el-form-item label="访问地址" prop="url">
-                        <el-input v-model="editForm.url">
+                        <el-input v-model="editForm.url" placeholder="如不填写,则自动生成">
                             <template slot="prepend">https://</template>
                         </el-input>
                     </el-form-item>
@@ -158,7 +158,7 @@
                         :picker-options="pickerOptions"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="密码" prop="passwd">
-                    <el-input v-model="editForm.passwd" auto-complete="off"></el-input>
+                    <el-input v-model="editForm.passwd" placeholder="如不填写,则自动生成" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="电话" prop="tel">
                     <el-input v-model="editForm.tel" auto-complete="off"></el-input>
@@ -356,21 +356,21 @@ export default {
             editType: "add", //默认新增类型
             editForm: {},
             editFormRules: {
-                name: [
-                    { required: true, message: "名称不能为空", trigger: "blur" }
-                ],
-                url: [
-                    { required: true, message: "访问地址不能为空", trigger: "blur" }
-                ],
+                // name: [
+                //     { required: true, message: "名称不能为空", trigger: "blur" }
+                // ],
+                // url: [
+                //     { required: true, message: "访问地址不能为空", trigger: "blur" }
+                // ],
                 startTime: [
                     { required: true, message: "开始日期不能为空", trigger: "blur" }
                 ],
                 endTime: [
                     { required: true, message: "结束日期不能为空", trigger: "blur" }
                 ],
-                passwd: [
-                    { required: true, message: "密码不能为空", trigger: "blur" }
-                ],
+                // passwd: [
+                //     { required: true, message: "密码不能为空", trigger: "blur" }
+                // ],
                 status: [
                     { required: true, message: "状态不能为空", trigger: "blur" }
                 ],
@@ -692,7 +692,7 @@ export default {
             let startDate = util.formatDate.format(date, "yyyy-MM-dd");
             date.setTime(date.getTime() + 3600 * 1000 * 24 * 365);
             let endDate = util.formatDate.format(date, "yyyy-MM-dd");
-            this.editForm = Object.assign({ startTime: startDate, endTime: endDate, isRefresh: false, isConnection: false, isKeepPush: false, status: '未启用', resource: '未确认' });
+            this.editForm = Object.assign({ startTime: startDate, endTime: endDate, isRefresh: false, isConnection: true, isKeepPush: false, status: '未启用', resource: '未确认' });
             this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
             this.editFormVisible = true;
         },
