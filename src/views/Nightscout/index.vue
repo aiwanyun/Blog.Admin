@@ -125,6 +125,8 @@
                                 @click.native="copy('https://' + scope.row.passwd + '@' + scope.row.url + '/api/v1')">复制api地址</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
                                 @click.native="copy('https://' + scope.row.url + '/api/v1/entries')">复制entries地址</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-document-copy"
+                                @click.native="copy('https://' + scope.row.url + ' ' + scope.row.passwd + '\n' + 'https://' + scope.row.passwd + '@' + scope.row.url + '/api/v1')">复制url+passwd+api</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </template>
@@ -441,7 +443,7 @@ export default {
     },
     methods: {
         copy(data) {
-            let elInput = document.createElement('input')
+            let elInput = document.createElement('textarea')
             elInput.value = data
             document.body.appendChild(elInput)
             // 选择对象
