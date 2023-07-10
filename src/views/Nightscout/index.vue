@@ -105,7 +105,9 @@
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item icon="el-icon-plus"
-                                @click.native="handleBind(scope.row)">获取绑定二维码</el-dropdown-item>
+                                @click.native="handleBind(scope.row)">获取微信绑定二维码</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-plus"
+                                @click.native="handleBindMini(scope.row)">获取小程序绑定二维码</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-close-notification"
                                 @click.native="handleUnbind(scope.row)">解除绑定</el-dropdown-item>
 
@@ -286,6 +288,14 @@
             </div>
         </el-dialog>
 
+        <el-dialog title="小程序绑定二维码" v-if="showMini" :visible.sync="showMini" width="300px">
+            <el-image style="width: 250px; height: 250px" :src="'/api/Nightscout/GetBindQR?nsid=' + curMini.Id">
+            </el-image>
+            <div slot="footer" class="dialog-footer">
+                <el-button type="primary" @click.native="showMini = false">关闭</el-button>
+            </div>
+        </el-dialog>
+
         <el-dialog title="操作日志" :visible.sync="showLog">
             <el-table :data="tableLog" highlight-current-row style="width: 100%;">
                 <el-table-column type="index" width="80"></el-table-column>
@@ -318,6 +328,7 @@ import {
     updateNightscout,
     Refresh,
     GetWeChatCode,
+    GetWeChatMiniCode,
     UnbindWeChat,
     GetLog,
     Reset,
@@ -430,6 +441,8 @@ export default {
             showCount: 3,
             isNew: true,
             showBind: false,
+            showMini: false,
+            curMini: {},
             showLog: false,
             curRow: {},
             plugins: [],
@@ -544,6 +557,13 @@ export default {
                     });
                 }
             })
+
+        },
+        handleBindMini(row) {
+
+            this.curMini = row;
+            this.showMini = true
+
 
         },
         handleUnbind(row) {

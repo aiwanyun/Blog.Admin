@@ -594,6 +594,10 @@ export const Refresh = params => {
 export const GetWeChatCode = params => {
     return axios.get(`${base}/api/Nightscout/GetWeChatCode`, { params: params });
 };
+// 获取小程序绑定
+export const GetWeChatMiniCode = params => {
+    return axios.get(`${base}/api/Nightscout/GetBindQR`, { params: params });
+};
 // 解除绑定
 export const UnbindWeChat = params => {
     return axios.get(`${base}/api/Nightscout/UnbindWeChat`, { params: params });
