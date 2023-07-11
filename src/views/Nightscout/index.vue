@@ -64,7 +64,7 @@
                     <el-tag :type="scope.row.isRefresh ? 'warning' : ''">{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="isConnection" label="是否接入" width="90">
+            <el-table-column show-overflow-tooltip prop="isConnection" label="高低报警" width="90">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.isConnection ? 'success' : ''">{{ scope.row.isConnection ? '是' : '否'
                     }}</el-tag>
@@ -76,9 +76,15 @@
                     }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="isKeepPush" label="是否绑定" width="90">
+            <el-table-column show-overflow-tooltip prop="isBindWeChat" label="是否绑定公众号" width="90">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.isBindWeChat ? 'success' : ''">{{ scope.row.isBindWeChat ? '是' : '否'
+                    }}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column show-overflow-tooltip prop="isBindMini" label="是否绑定小程序" width="90">
+                <template slot-scope="scope">
+                    <el-tag :type="scope.row.isBindMini ? 'success' : ''">{{ scope.row.isBindMini ? '是' : '否'
                     }}</el-tag>
                 </template>
             </el-table-column>
@@ -202,7 +208,7 @@
                     </el-form-item>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="设置后绑定微信后就可以推送了,需要强制刷新一次" placement="top">
-                    <el-form-item label="是否接入" prop="isConnection">
+                    <el-form-item label="高低报警" prop="isConnection">
                         <el-radio v-model="editForm.isConnection" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isConnection" :label="false">否</el-radio>
                     </el-form-item>
@@ -566,7 +572,7 @@ export default {
             GetWeChatMiniCode({ nsid: row.Id }).then(res => {
 
                 if (res.data && res.data.success) {
-                    this.curMini = res.data;
+                    this.curMini = res.data.response;
                     this.showMini = true
 
                 } else {
