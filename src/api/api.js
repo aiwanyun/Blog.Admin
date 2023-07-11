@@ -590,7 +590,7 @@ export const addNightscout = params => {
 export const Refresh = params => {
     return axios.get(`${base}/api/Nightscout/Refresh`, { params: params });
 };
-// 获取微信绑定
+// 获取微信公众号绑定
 export const GetWeChatCode = params => {
     return axios.get(`${base}/api/Nightscout/GetWeChatCode`, { params: params });
 };
@@ -598,9 +598,13 @@ export const GetWeChatCode = params => {
 export const GetWeChatMiniCode = params => {
     return axios.get(`${base}/api/Nightscout/GetBindQR`, { params: params });
 };
-// 解除绑定
+// 解除公众号绑定
 export const UnbindWeChat = params => {
     return axios.get(`${base}/api/Nightscout/UnbindWeChat`, { params: params });
+};
+// 解除小程序绑定
+export const UnbindWeChatMini = params => {
+    return axios.get(`${base}/api/Nightscout/UnBindQR`, { params: params });
 };
 // 获取实例日志
 export const GetLog = params => {

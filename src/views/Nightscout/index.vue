@@ -105,12 +105,13 @@
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item icon="el-icon-plus"
-                                @click.native="handleBind(scope.row)">获取微信绑定二维码</el-dropdown-item>
+                                @click.native="handleBind(scope.row)">获取公众号绑定二维码</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-close-notification"
+                                @click.native="handleUnbind(scope.row)">解除公众号绑定</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-plus"
                                 @click.native="handleBindMini(scope.row)">获取小程序绑定二维码</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-close-notification"
-                                @click.native="handleUnbind(scope.row)">解除绑定</el-dropdown-item>
-
+                                @click.native="handleUnbindMini(scope.row)">解除小程序绑定</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-refresh"
                                 @click.native="handleRefresh(scope.row)">强制刷新</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-s-open"
@@ -289,7 +290,7 @@
         </el-dialog>
 
         <el-dialog title="小程序绑定二维码" v-if="showMini" :visible.sync="showMini" width="300px">
-            <el-image style="width: 250px; height: 250px" :src="'/api/Nightscout/GetBindQR?nsid=' + curMini.Id">
+            <el-image style="width: 250px; height: 250px" :src="'data:image/png;base64,' + this.curMini">
             </el-image>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click.native="showMini = false">关闭</el-button>
@@ -330,6 +331,7 @@ import {
     GetWeChatCode,
     GetWeChatMiniCode,
     UnbindWeChat,
+    UnbindWeChatMini,
     GetLog,
     Reset,
     GetSummary,
@@ -561,13 +563,26 @@ export default {
         },
         handleBindMini(row) {
 
-            this.curMini = row;
-            this.showMini = true
+            GetWeChatMiniCode({ nsid: row.Id }).then(res => {
+
+                if (res.data && res.data.success) {
+                    this.curMini = res.data;
+                    this.showMini = true
+
+                } else {
+                    this.$message({
+                        message: res.data.msg || "获取失败!",
+                        type: "error"
+                    });
+                }
+            })
+
+
 
 
         },
         handleUnbind(row) {
-            this.$confirm("确定解除[" + row.name + "]的微信绑定吗？", "提示", {}).then(() => {
+            this.$confirm("确定解除[" + row.name + "]的公众号绑定吗？", "提示", {}).then(() => {
                 UnbindWeChat({ id: row.Id }).then(res => {
                     if (res.data && res.data.success) {
                         this.$message({
@@ -583,6 +598,23 @@ export default {
                 })
             });
 
+        },
+        handleUnbindMini(row) {
+            this.$confirm("确定解除[" + row.name + "]的小程序绑定吗？", "提示", {}).then(() => {
+                UnbindWeChatMini({ nsid: row.Id }).then(res => {
+                    if (res.data && res.data.success) {
+                        this.$message({
+                            message: res.data.msg || "解绑成功!",
+                            type: "success"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "解绑失败!",
+                            type: "error"
+                        });
+                    }
+                })
+            });
         },
         handleLog(row) {
             if (row) this.curRow = row
