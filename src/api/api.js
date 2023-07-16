@@ -614,6 +614,10 @@ export const GetLog = params => {
 export const Reset = params => {
     return axios.get(`${base}/api/Nightscout/Reset`, { params: params });
 };
+// 重置数据
+export const Stop = params => {
+    return axios.get(`${base}/api/Nightscout/Stop`, { params: params });
+};
 // 获取统计
 export const GetSummary = params => {
     return axios.get(`${base}/api/Nightscout/GetSummary`, { params: params });

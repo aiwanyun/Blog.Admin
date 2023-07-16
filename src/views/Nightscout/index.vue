@@ -120,6 +120,8 @@
                                 @click.native="handleUnbindMini(scope.row)">解除小程序绑定</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-refresh"
                                 @click.native="handleRefresh(scope.row)">强制刷新</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-refresh"
+                                @click.native="handleStop(scope.row)">停止实例</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-s-open"
                                 @click.native="handleReset(scope.row)">重置数据</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-s-order"
@@ -340,6 +342,7 @@ import {
     UnbindWeChatMini,
     GetLog,
     Reset,
+    Stop,
     GetSummary,
     GetPlugins,
     getAllNsServer
@@ -539,6 +542,24 @@ export default {
                     } else {
                         this.$message({
                             message: res.data.msg || "刷新失败!",
+                            type: "error"
+                        });
+                    }
+                })
+            });
+
+        },
+        handleStop(row) {
+            this.$confirm("确认停止[" + row.name + "]的NS服务？", "提示", {}).then(() => {
+                Stop({ id: row.Id }).then(res => {
+                    if (res.data && res.data.success) {
+                        this.$message({
+                            message: res.data.msg || "停止成功!",
+                            type: "success"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "停止失败!",
                             type: "error"
                         });
                     }
