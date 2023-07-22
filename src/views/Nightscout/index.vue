@@ -59,7 +59,7 @@
                     getServerName(scope.row)
                 }}</template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="isRefresh" label="强制刷新" width="90">
+            <el-table-column show-overflow-tooltip prop="isRefresh" label="自动重启实例" width="90">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.isRefresh ? 'warning' : ''">{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
                 </template>
@@ -119,8 +119,8 @@
                             <el-dropdown-item icon="el-icon-close-notification"
                                 @click.native="handleUnbindMini(scope.row)">解除小程序绑定</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-refresh"
-                                @click.native="handleRefresh(scope.row)">强制刷新</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-refresh"
+                                @click.native="handleRefresh(scope.row)">重启实例</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-error"
                                 @click.native="handleStop(scope.row)">停止实例</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-s-open"
                                 @click.native="handleReset(scope.row)">重置数据</el-dropdown-item>
@@ -204,18 +204,18 @@
                     </el-form-item>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="设置后每次编辑都会重启NS服务" placement="top">
-                    <el-form-item label="强制刷新" prop="isRefresh">
+                    <el-form-item label="自动重启实例" prop="isRefresh">
                         <el-radio v-model="editForm.isRefresh" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isRefresh" :label="false">否</el-radio>
                     </el-form-item>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="设置后绑定微信后就可以推送了,需要强制刷新一次" placement="top">
+                <el-tooltip class="item" effect="dark" content="设置后绑定微信后就可以推送了,需要重启实例一次" placement="top">
                     <el-form-item label="高低报警" prop="isConnection">
                         <el-radio v-model="editForm.isConnection" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isConnection" :label="false">否</el-radio>
                     </el-form-item>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="设置持续推送后,需要强制刷新一次" placement="top">
+                <el-tooltip class="item" effect="dark" content="设置持续推送后,需要重启实例一次" placement="top">
                     <el-form-item label="持续推送" prop="isKeepPush">
                         <el-radio v-model="editForm.isKeepPush" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isKeepPush" :label="false">否</el-radio>

@@ -49,7 +49,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
     response => {
         if (loadingInstance) loadingInstance.close();
-        if (response.data && response.data.success === false && response.config && (response.config.showError === undefined || response.config.showError === true) ){
+        if (response.data && response.data.success === false && response.config && (response.config.showError === undefined || response.config.showError === true)) {
             Vue.prototype.$message({
                 message: response.data.msg || response.data.msgDev,
                 type: 'error'
@@ -174,7 +174,7 @@ const ToLogin = params => {
         applicationUserManager.login();
     } else {
         router.replace({
-            path: "/login?redirect="+router.currentRoute.fullPath ,
+            path: "/login",
             // query: { redirect: router.currentRoute.fullPath }
         });
         //window.location.reload()
@@ -451,11 +451,11 @@ export const updateWeChatKeyword = params => {
     return axios.put(`${base}/api/WeChatKeyword/put`, params);
 };
 
-export const UpdateWeChatFile = (id,type,params) => {
+export const UpdateWeChatFile = (id, type, params) => {
     return axios.post(`${base}/api/WeChatKeyword/UpdateWeChatFile?id=${id}&type=${type}`, params);
 };
 export const GetWeChatMediaList = params => {
-    return axios.get(`${base}/api/WeChatKeyword/GetWeChatMediaList`, {params:params});
+    return axios.get(`${base}/api/WeChatKeyword/GetWeChatMediaList`, { params: params });
 };
 
 
@@ -636,7 +636,7 @@ export const getAllNsServer = params => {
 };
 
 //删除ns服务器
-export const delNsServer= params => {
+export const delNsServer = params => {
     return axios.put(`${base}/api/Nightscout/delNsServer`, params);
 };
 //更新ns服务器
