@@ -33,9 +33,9 @@
 
         <!--列表-->
         <el-table :data="tableData" highlight-current-row @selection-change="selsChange" style="width: 100%;">
-            <el-table-column type="selection" width="60"></el-table-column>
-            <el-table-column type="index" width="80"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="name" label="名称" width="100"></el-table-column>
+            <el-table-column type="selection" fixed="left" width="60"></el-table-column>
+            <el-table-column type="index" width="60" fixed="left"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="name" fixed="left" label="名称" width="100"></el-table-column>
             <el-table-column show-overflow-tooltip prop="url" label="访问地址" width="250">
                 <template slot-scope="scope">
                     {{ (scope.row.url ? 'https://' : '') }}{{ scope.row.url }}
@@ -52,14 +52,14 @@
                 </template>
             </el-table-column>
             <el-table-column show-overflow-tooltip prop="passwd" label="密码" width="150"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="instanceIP" label="实例IP" width="120"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="instanceIP" label="实例IP" width="150"></el-table-column>
             <el-table-column show-overflow-tooltip prop="serviceName" label="服务名称" width="200"></el-table-column>
             <el-table-column show-overflow-tooltip prop="serverId" label="服务器" width="150">
                 <template slot-scope="scope">{{
                     getServerName(scope.row)
                 }}</template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="isRefresh" label="自动重启实例" width="90">
+            <el-table-column show-overflow-tooltip prop="isRefresh" label="自动重启" width="90">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.isRefresh ? 'warning' : ''">{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
                 </template>
@@ -181,7 +181,7 @@
                 </el-form-item>
 
                 <el-form-item label="部署服务器" prop="serverId">
-                    <el-select :disabled="editType == '编辑'" v-model="editForm.serverId" placeholder="请选择">
+                    <el-select v-model="editForm.serverId" placeholder="请选择">
                         <el-option v-for="item in nsServer" :key="item.Id" :label="item.serverName + '(' + item.count + ')'"
                             :value="item.Id">
                         </el-option>
@@ -189,22 +189,18 @@
                 </el-form-item>
                 <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
                     <el-form-item label="实例IP" prop="instanceIP">
-
                         <el-input :disabled="true" v-model="editForm.instanceIP" auto-complete="off"
                             placeholder="自动生成"></el-input>
-
                     </el-form-item>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
                     <el-form-item label="服务名称" prop="serviceName">
-
                         <el-input :disabled="true" v-model="editForm.serviceName" auto-complete="off"
                             placeholder="自动生成"></el-input>
-
                     </el-form-item>
                 </el-tooltip>
                 <el-tooltip class="item" effect="dark" content="设置后每次编辑都会重启NS服务" placement="top">
-                    <el-form-item label="自动重启实例" prop="isRefresh">
+                    <el-form-item label="自动重启" prop="isRefresh">
                         <el-radio v-model="editForm.isRefresh" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isRefresh" :label="false">否</el-radio>
                     </el-form-item>
