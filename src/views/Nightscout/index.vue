@@ -1,41 +1,42 @@
 <template>
     <section>
         <!--工具条-->
-        <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-            <el-form :inline="true" :model="para" @submit.native.prevent style="margin-top: 10px;">
-                <el-form-item>
-                    <el-input clearable v-model="para.name" placeholder="标题/内容"
-                        @keyup.enter.native.prevent="handleCurrentChange(1)"></el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
-                    <el-button type="primary" @click="handleAdd">新增</el-button>
-                    <el-button type="primary" @click="handleView(true)">预览</el-button>
-                    <el-button type="primary" @click="handleView(false)">预览(备用)</el-button>
-                </el-form-item>
-                <el-form-item>
-                    <label>状态:</label>
-                    <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '20px' }" :key="item.name"
-                        v-for="(item, index) in summary.status" :value="item.count" class="item">
-                        <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;">{{
-                            (item.name ? item.name : '未确认') }}</el-tag>
-                    </el-badge>
-                    <label style="margin-left: 10px;">来源:</label>
-                    <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '20px' }" :key="item.name"
-                        v-for="(item, index) in summary.resource" :value="item.count" class="item">
-                        <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;"
-                            type="info">{{ (item.name ? item.name : '未确认')
-                            }}</el-tag>
-                    </el-badge>
-                </el-form-item>
-            </el-form>
-        </el-col>
-
+        <el-row>
+            <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
+                <el-form :inline="true" :model="para" @submit.native.prevent style="margin-top: 10px;">
+                    <el-form-item>
+                        <el-input clearable v-model="para.name" placeholder="标题/内容"
+                            @keyup.enter.native.prevent="handleCurrentChange(1)"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
+                        <el-button type="primary" @click="handleAdd">新增</el-button>
+                        <el-button type="primary" @click="handleView(true)">预览</el-button>
+                        <el-button type="primary" @click="handleView(false)">预览-备用</el-button>
+                    </el-form-item>
+                    <el-form-item>
+                        <label>状态:</label>
+                        <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '30px' }" :key="item.name"
+                            v-for="(item, index) in summary.status" :value="item.count" class="item">
+                            <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;">{{
+                                (item.name ? item.name : '未确认') }}</el-tag>
+                        </el-badge>
+                        <label style="margin-left: 10px;">来源:</label>
+                        <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '30px' }" :key="item.name"
+                            v-for="(item, index) in summary.resource" :value="item.count" class="item">
+                            <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;;"
+                                type="info">{{ (item.name ? item.name : '未确认')
+                                }}</el-tag>
+                        </el-badge>
+                    </el-form-item>
+                </el-form>
+            </el-col>
+        </el-row>
         <!--列表-->
-        <el-table :data="tableData" highlight-current-row @selection-change="selsChange" style="width: 100%;">
-            <el-table-column type="selection" fixed="left" width="60"></el-table-column>
-            <el-table-column type="index" width="60" fixed="left"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="name" fixed="left" label="名称" width="100"></el-table-column>
+        <el-table :data="tableData" highlight-current-row @selection-change="selsChange">
+            <el-table-column type="selection" width="50"></el-table-column>
+            <el-table-column type="index" width="40"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="name" label="名称" width="100"></el-table-column>
             <el-table-column show-overflow-tooltip prop="url" label="访问地址" width="250">
                 <template slot-scope="scope">
                     {{ (scope.row.url ? 'https://' : '') }}{{ scope.row.url }}
@@ -76,15 +77,21 @@
                     }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="isBindWeChat" label="是否绑定公众号" width="90">
+            <el-table-column show-overflow-tooltip prop="isBindWeChat" label="绑定公众号" width="90">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.isBindWeChat ? 'success' : ''">{{ scope.row.isBindWeChat ? '是' : '否'
                     }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="isBindMini" label="是否绑定小程序" width="90">
+            <el-table-column show-overflow-tooltip prop="isBindMini" label="绑定小程序" width="90">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.isBindMini ? 'success' : ''">{{ scope.row.isBindMini ? '是' : '否'
+                    }}</el-tag>
+                </template>
+            </el-table-column>
+            <el-table-column show-overflow-tooltip prop="isChina" label="国内解析" width="90">
+                <template slot-scope="scope">
+                    <el-tag :type="scope.row.isChina ? 'success' : ''">{{ scope.row.isChina ? '是' : '否'
                     }}</el-tag>
                 </template>
             </el-table-column>
@@ -126,6 +133,10 @@
                                 @click.native="handleReset(scope.row)">重置数据</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-s-order"
                                 @click.native="handleLog(scope.row)">操作日志</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-s-order"
+                                @click.native="handleResolve(scope.row)">添加国内解析</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-s-order"
+                                @click.native="handleUnResolve(scope.row)">取消国内解析</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete"
                                 @click.native="handleDel(scope.row)">删除</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
@@ -144,9 +155,12 @@
             </el-table-column>
         </el-table>
         <!--翻页-->
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page.pageIndex"
+        <el-pagination small layout="prev, pager, next" :limit.sync="page.pageSize" :total="page.pageTotal"
+            :page.sync="page.pageIndex" @current-change="handleCurrentChange">
+        </el-pagination>
+        <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page.pageIndex"
             :page-sizes="[10, 100, 500, 1000]" :page-size="page.pageSize" layout="total, sizes, prev, pager, next, jumper"
-            :total="page.pageTotal"></el-pagination>
+            :total="page.pageTotal"></el-pagination> -->
 
         <!--编辑界面-->
         <el-dialog :title="editType" :visible.sync="editFormVisible" v-model="editFormVisible"
@@ -341,7 +355,9 @@ import {
     Stop,
     GetSummary,
     GetPlugins,
-    getAllNsServer
+    getAllNsServer,
+    ResolveDomain,
+    UnResolveDomain
 } from "../../api/api";
 import QRCode from "qrcode";
 import util from "../../../util/date";
@@ -508,6 +524,44 @@ export default {
                 }
             })
         },
+        handleResolve(row) {
+            this.$confirm("确定添加[" + row.name + "]到国内解析吗？", "提示", {}).then(() => {
+                ResolveDomain({ id: row.Id }).then(res => {
+
+                    if (res.data && res.data.success) {
+                        this.$message({
+                            message: res.data.msg || "添加成功!",
+                            type: "success"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "添加失败!",
+                            type: "error"
+                        });
+                    }
+                    this.handleSearch();
+                })
+            });
+        },
+        handleUnResolve(row) {
+            this.$confirm("确定取消[" + row.name + "]的国内解析吗？", "提示", {}).then(() => {
+                UnResolveDomain({ id: row.Id }).then(res => {
+
+                    if (res.data && res.data.success) {
+                        this.$message({
+                            message: res.data.msg || "取消成功!",
+                            type: "success"
+                        });
+                    } else {
+                        this.$message({
+                            message: res.data.msg || "取消失败!",
+                            type: "error"
+                        });
+                    }
+                    this.handleSearch();
+                })
+            });
+        },
         handleReset(row) {
             this.$confirm("确定重置[" + row.name + "]的数据吗？", "提示", {}).then(() => {
                 Reset({ id: row.Id }).then(res => {
@@ -618,6 +672,7 @@ export default {
                             type: "error"
                         });
                     }
+                    this.handleSearch();
                 })
             });
 
@@ -636,6 +691,7 @@ export default {
                             type: "error"
                         });
                     }
+                    this.handleSearch();
                 })
             });
         },
