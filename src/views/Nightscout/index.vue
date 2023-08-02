@@ -98,7 +98,8 @@
 
             <el-table-column show-overflow-tooltip prop="status" label="状态" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="resource" label="来源" width="90"></el-table-column>
-
+            <el-table-column show-overflow-tooltip prop="money" label="费用/元" width="90"></el-table-column>
+            
 
             <el-table-column show-overflow-tooltip prop="backupurl" label="备用访问" width="350">
                 <template slot-scope="scope">
@@ -257,6 +258,18 @@
                     </el-select>
                 </el-form-item>
 
+                <el-form-item label="费用/元" prop="money">
+                    <el-select v-model.number="editForm.money" filterable allow-create placeholder="请选择金额">
+                        <el-option label="0" value="0"></el-option>
+                        <el-option label="100" value="100"></el-option>
+                        <el-option label="130" value="130"></el-option>
+                        <el-option label="150" value="150"></el-option>
+                        <el-option label="180" value="180"></el-option>
+                        <el-option label="200" value="200"></el-option>
+                    </el-select>
+                </el-form-item>
+
+
                 <el-form-item label="启用组件" prop="plugins_arr">
                     <el-select filterable style="width: 100%;" clearable multiple v-model="editForm.plugins_arr"
                         placeholder="请选择要启用的组件">
@@ -322,7 +335,6 @@
                 <el-table-column show-overflow-tooltip prop="content" label="日志" min-width="350"></el-table-column>
                 <el-table-column show-overflow-tooltip prop="success" label="状态" width="90">
                     <template slot-scope="scope">
-
                         <el-tag :type="(scope.row.success ? '' : 'danger')"> {{ (scope.row.success ? '成功' : '失败') }}
                         </el-tag>
                     </template>
