@@ -99,7 +99,7 @@
             <el-table-column show-overflow-tooltip prop="status" label="状态" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="resource" label="来源" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="money" label="费用/元" width="90"></el-table-column>
-            
+
 
             <el-table-column show-overflow-tooltip prop="backupurl" label="备用访问" width="350">
                 <template slot-scope="scope">
@@ -262,6 +262,7 @@
                     <el-select v-model.number="editForm.money" filterable allow-create placeholder="请选择金额">
                         <el-option label="0" value="0"></el-option>
                         <el-option label="100" value="100"></el-option>
+                        <el-option label="120" value="120"></el-option>
                         <el-option label="130" value="130"></el-option>
                         <el-option label="150" value="150"></el-option>
                         <el-option label="180" value="180"></el-option>
@@ -837,7 +838,7 @@ export default {
             let startDate = util.formatDate.format(date, "yyyy-MM-dd");
             date.setTime(date.getTime() + 3600 * 1000 * 24 * 365);
             let endDate = util.formatDate.format(date, "yyyy-MM-dd");
-            this.editForm = Object.assign({ startTime: startDate, endTime: endDate, isRefresh: false, isConnection: true, isKeepPush: false, status: '未启用', resource: '未确认' });
+            this.editForm = Object.assign({ money: 0, startTime: startDate, endTime: endDate, isRefresh: false, isConnection: true, isKeepPush: false, status: '未启用', resource: '未确认' });
             this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
             this.editFormVisible = true;
         },
