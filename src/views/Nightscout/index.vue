@@ -157,7 +157,7 @@
         </el-table>
         <!--翻页-->
         <el-pagination small layout="prev, pager, next" :limit.sync="page.pageSize" :total="page.pageTotal"
-            :page.sync="page.pageIndex" @current-change="handleCurrentChange">
+            :current-page.sync="page.pageIndex" @current-change="handleCurrentChange">
         </el-pagination>
         <!-- <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="page.pageIndex"
             :page-sizes="[10, 100, 500, 1000]" :page-size="page.pageSize" layout="total, sizes, prev, pager, next, jumper"

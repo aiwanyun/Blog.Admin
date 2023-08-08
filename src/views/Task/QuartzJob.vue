@@ -7,8 +7,8 @@
     <el-table :data="Tasks" highlight-current-row v-loading="listLoading" @current-change="selectCurrentRow"
       style="width: 100%">
       <el-table-column type="index" width="80"></el-table-column>
-      <el-table-column prop="JobGroup" label="任务组" width="150" show-overflow-tooltip sortable></el-table-column>
-      <el-table-column prop="Name" label="名称" width="150" show-overflow-tooltip sortable></el-table-column>
+      <el-table-column prop="JobGroup" label="任务组" width="200" show-overflow-tooltip sortable></el-table-column>
+      <el-table-column prop="Name" label="名称" width="200" show-overflow-tooltip sortable></el-table-column>
 
       <el-table-column prop="TriggerType" label="任务类型" width="150" show-overflow-tooltip sortable>
         <template slot-scope="scope">
