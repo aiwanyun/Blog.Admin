@@ -16,6 +16,23 @@
             "Cron" : "Simple" }}</el-tag>
         </template>
       </el-table-column>
+      <el-table-column prop="Triggers" label="状态-内存" width="150" show-overflow-tooltip sortable>
+        <template slot-scope="scope">
+          <el-tag :type="
+            scope.row.Triggers[0].triggerStatus == '正常'
+              ? 'success'
+              : 'danger'
+          " disable-transitions>{{ scope.row.Triggers[0].triggerStatus }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="IsStart" label="状态-数据库" width="150" show-overflow-tooltip sortable>
+        <template slot-scope="scope">
+          <el-tag :type="scope.row.IsStart ? 'success' : 'danger'" disable-transitions>{{ scope.row.IsStart ? "运行中" : "停止"
+          }}</el-tag>
+        </template>
+      </el-table-column>
+
+      
 
       <el-table-column prop="Cron" label="Cron表达式" width="200" show-overflow-tooltip sortable></el-table-column>
       <el-table-column prop="RunTimes" label="累计运行(次)" width="150" show-overflow-tooltip sortable></el-table-column>
@@ -29,22 +46,7 @@
         sortable></el-table-column>
       <el-table-column prop="EndTime" label="结束时间" width="200" show-overflow-tooltip :formatter="formatEndTime"
         sortable></el-table-column>
-      <el-table-column prop="IsStart" label="状态-数据库" width="150" show-overflow-tooltip sortable>
-        <template slot-scope="scope">
-          <el-tag :type="scope.row.IsStart ? 'success' : 'danger'" disable-transitions>{{ scope.row.IsStart ? "运行中" : "停止"
-          }}</el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column prop="Triggers" label="状态-内存" width="150" show-overflow-tooltip sortable>
-        <template slot-scope="scope">
-          <el-tag :type="
-            scope.row.Triggers[0].triggerStatus == '正常'
-              ? 'success'
-              : 'danger'
-          " disable-transitions>{{ scope.row.Triggers[0].triggerStatus }}</el-tag>
-        </template>
-      </el-table-column>
+      
       <!-- <el-table-column prop="Remark" label="备注" ></el-table-column> -->
 
       <el-table-column label="日志" fixed="right">
