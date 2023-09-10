@@ -60,6 +60,12 @@
                     getServerName(scope.row)
                 }}</template>
             </el-table-column>
+
+            <el-table-column show-overflow-tooltip prop="serverId" label="服务网络" width="150">
+                <template slot-scope="scope">{{
+                    getCDNName(scope.row)
+                }}</template>
+            </el-table-column>
             <el-table-column show-overflow-tooltip prop="isRefresh" label="自动重启" width="90">
                 <template slot-scope="scope">
                     <el-tag :type="scope.row.isRefresh ? 'warning' : ''">{{ scope.row.isRefresh ? '是' : '否' }}</el-tag>
@@ -89,12 +95,7 @@
                     }}</el-tag>
                 </template>
             </el-table-column>
-            <el-table-column show-overflow-tooltip prop="isChina" label="国内解析" width="90">
-                <template slot-scope="scope">
-                    <el-tag :type="scope.row.isChina ? 'success' : ''">{{ scope.row.isChina ? '是' : '否'
-                    }}</el-tag>
-                </template>
-            </el-table-column>
+
 
             <el-table-column show-overflow-tooltip prop="status" label="状态" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="resource" label="来源" width="90"></el-table-column>
@@ -134,10 +135,6 @@
                                 @click.native="handleReset(scope.row)">重置数据</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-s-order"
                                 @click.native="handleLog(scope.row)">操作日志</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-s-order"
-                                @click.native="handleResolve(scope.row)">添加国内解析</el-dropdown-item>
-                            <el-dropdown-item icon="el-icon-s-order"
-                                @click.native="handleUnResolve(scope.row)">取消国内解析</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete"
                                 @click.native="handleDel(scope.row)">删除</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
@@ -194,11 +191,16 @@
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="editForm.remark" auto-complete="off"></el-input>
                 </el-form-item>
-
                 <el-form-item label="部署服务器" prop="serverId">
                     <el-select v-model="editForm.serverId" placeholder="请选择">
                         <el-option v-for="item in nsServer" :key="item.Id" :label="item.serverName + '(' + item.count + ')'"
                             :value="item.Id">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="服务网络" prop="cdn">
+                    <el-select v-model="editForm.cdn" placeholder="请选择">
+                        <el-option v-for="item in cdnList" :key="item.value" :label="item.name" :value="item.value">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -368,9 +370,7 @@ import {
     Stop,
     GetSummary,
     GetPlugins,
-    getAllNsServer,
-    ResolveDomain,
-    UnResolveDomain
+    getAllNsServer
 } from "../../api/api";
 import QRCode from "qrcode";
 import util from "../../../util/date";
@@ -428,6 +428,9 @@ export default {
                 ],
                 serverId: [
                     { required: true, message: "部署服务器不能为空", trigger: "blur" }
+                ],
+                cdn: [
+                    { required: true, message: "服务网络不能为空", trigger: "blur" }
                 ]
             },
             pickerOptions: {
@@ -482,10 +485,28 @@ export default {
             showLog: false,
             curRow: {},
             plugins: [],
-            nsServer: []
+            nsServer: [],
+            cdnList: [
+                {
+                    name: "亚马逊云(国外)",
+                    value: "aws"
+                },
+                {
+                    name: "七牛云(国内-主用)",
+                    value: "qiniu"
+                },
+                {
+                    name: "阿里云(国内-aps)",
+                    value: "aliyun"
+                }, {
+                    name: "腾讯云(国内-备用)",
+                    value: "qcloud"
+                }
+            ]
         };
     },
     created() {
+        this.handleSummary();
         this.handleSearch();
         this.GetPlugins();
         this.getAllNsServer();
@@ -506,9 +527,16 @@ export default {
                 type: "success"
             });
         },
+        getCDNName(row) {
+            let findRow = this.cdnList.find(t => t.value === row.cdn)
+            let tag = "";
+            if (findRow) {
+                tag = findRow.name
+            }
+            return tag;
+        },
         getServerName(row) {
-            let id = row.serverId
-            let findRow = this.nsServer.find(t => t.Id === id)
+            let findRow = this.nsServer.find(t => t.Id === row.serverId)
             let tag = "";
             if (findRow) {
                 tag += findRow.serverName
@@ -536,44 +564,6 @@ export default {
                     });
                 }
             })
-        },
-        handleResolve(row) {
-            this.$confirm("确定添加[" + row.name + "]到国内解析吗？", "提示", {}).then(() => {
-                ResolveDomain({ id: row.Id }).then(res => {
-
-                    if (res.data && res.data.success) {
-                        this.$message({
-                            message: res.data.msg || "添加成功!",
-                            type: "success"
-                        });
-                    } else {
-                        this.$message({
-                            message: res.data.msg || "添加失败!",
-                            type: "error"
-                        });
-                    }
-                    this.handleSearch();
-                })
-            });
-        },
-        handleUnResolve(row) {
-            this.$confirm("确定取消[" + row.name + "]的国内解析吗？", "提示", {}).then(() => {
-                UnResolveDomain({ id: row.Id }).then(res => {
-
-                    if (res.data && res.data.success) {
-                        this.$message({
-                            message: res.data.msg || "取消成功!",
-                            type: "success"
-                        });
-                    } else {
-                        this.$message({
-                            message: res.data.msg || "取消失败!",
-                            type: "error"
-                        });
-                    }
-                    this.handleSearch();
-                })
-            });
         },
         handleReset(row) {
             this.$confirm("确定重置[" + row.name + "]的数据吗？", "提示", {}).then(() => {
@@ -769,7 +759,6 @@ export default {
             this.handleLog();
         },
         handleSearch() {
-
             getNightscout({ key: this.para.name, pageSize: this.page.pageSize, page: this.page.pageIndex })
                 .then(res => {
                     if (res.data.success) {
@@ -783,6 +772,9 @@ export default {
                         });
                     }
                 });
+
+        },
+        handleSummary() {
             this.summary.status = []
             this.summary.resource = []
             GetSummary().then(res => {
@@ -860,6 +852,7 @@ export default {
                                         });
                                         this.handleSearch();
                                         this.editFormVisible = false;
+                                        this.handleSummary();
                                     } else {
                                         this.$message({
                                             message: res.data.msg || "添加失败!",
@@ -879,6 +872,7 @@ export default {
                                         });
                                         this.handleSearch();
                                         this.editFormVisible = false;
+                                        this.handleSummary();
                                     } else {
                                         this.$message({
                                             message: res.data.msg || "编辑失败!",

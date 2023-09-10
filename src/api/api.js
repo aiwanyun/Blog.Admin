@@ -647,14 +647,6 @@ export const updateNsServer = params => {
 export const addNsServer = params => {
     return axios.post(`${base}/api/Nightscout/addNsServer`, params);
 };
-//添加国内解析
-export const ResolveDomain = params => {
-    return axios.get(`${base}/api/Nightscout/ResolveDomain`, { params: params });
-};
-//取消国内解析
-export const UnResolveDomain = params => {
-    return axios.get(`${base}/api/Nightscout/UnResolveDomain`, { params: params });
-};
 
 
 

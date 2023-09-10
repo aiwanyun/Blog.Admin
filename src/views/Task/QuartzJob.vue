@@ -31,17 +31,15 @@
           }}</el-tag>
         </template>
       </el-table-column>
-
-      
-
       <el-table-column prop="Cron" label="Cron表达式" width="200" show-overflow-tooltip sortable></el-table-column>
+      <el-table-column prop="AssemblyName" label="程序集" width="150" show-overflow-tooltip sortable></el-table-column>
+      <el-table-column prop="ClassName" label="执行类" width="150" show-overflow-tooltip sortable></el-table-column>
+
       <el-table-column prop="RunTimes" label="累计运行(次)" width="150" show-overflow-tooltip sortable></el-table-column>
       <el-table-column prop="IntervalSecond" label="循环周期(秒)" width="150" show-overflow-tooltip sortable></el-table-column>
       <el-table-column prop="CycleRunTimes" label="循环(次)" width="150" show-overflow-tooltip sortable></el-table-column>
       <el-table-column prop="CycleHasRunTimes" label="已循环(次)" width="150" show-overflow-tooltip
         sortable></el-table-column>
-      <el-table-column prop="AssemblyName" label="程序集" width="150" show-overflow-tooltip sortable></el-table-column>
-      <el-table-column prop="ClassName" label="执行类" width="150" show-overflow-tooltip sortable></el-table-column>
       <el-table-column prop="BeginTime" label="开始时间" width="200" show-overflow-tooltip :formatter="formatBeginTime"
         sortable></el-table-column>
       <el-table-column prop="EndTime" label="结束时间" width="200" show-overflow-tooltip :formatter="formatEndTime"
