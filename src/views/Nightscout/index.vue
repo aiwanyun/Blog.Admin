@@ -193,14 +193,14 @@
                 </el-form-item>
                 <el-form-item label="部署服务器" prop="serverId">
                     <el-select v-model="editForm.serverId" placeholder="请选择">
-                        <el-option v-for="item in nsServer" :key="item.Id" :label="item.serverName + '(' + item.count + ')'"
-                            :value="item.Id">
+                        <el-option v-for="item in nsServer" :key="item.Id"
+                            :label="item.serverName + '(' + item.count + '/' + item.holdCount + ')'" :value="item.Id">
                         </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="服务网络" prop="cdn">
                     <el-select v-model="editForm.cdn" placeholder="请选择">
-                        <el-option v-for="item in cdnList" :key="item.value" :label="item.name" :value="item.value">
+                        <el-option v-for="item in cdnList" :key="item.key" :label="item.name" :value="item.key">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -370,7 +370,8 @@ import {
     Stop,
     GetSummary,
     GetPlugins,
-    getAllNsServer
+    getAllNsServer,
+    GetCDNList
 } from "../../api/api";
 import QRCode from "qrcode";
 import util from "../../../util/date";
@@ -486,32 +487,27 @@ export default {
             curRow: {},
             plugins: [],
             nsServer: [],
-            cdnList: [
-                {
-                    name: "亚马逊云(国外)",
-                    value: "aws"
-                },
-                {
-                    name: "七牛云(国内-主用)",
-                    value: "qiniu"
-                },
-                {
-                    name: "阿里云(国内-aps)",
-                    value: "aliyun"
-                }, {
-                    name: "腾讯云(国内-备用)",
-                    value: "qcloud"
-                }
-            ]
+            defaultCDN: '',
+            cdnList: []
         };
     },
     created() {
+
         this.handleSummary();
         this.handleSearch();
         this.GetPlugins();
         this.getAllNsServer();
+        this.GetCDNList()
     },
     methods: {
+        GetCDNList() {
+            GetCDNList().then(res => {
+                if (res.data.success) {
+                    this.cdnList = res.data.response.CDNList
+                    this.defaultCDN = res.data.response.defaultCDN
+                }
+            })
+        },
         copy(data) {
             let elInput = document.createElement('textarea')
             elInput.value = data
@@ -528,7 +524,7 @@ export default {
             });
         },
         getCDNName(row) {
-            let findRow = this.cdnList.find(t => t.value === row.cdn)
+            let findRow = this.cdnList.find(t => t.key === row.cdn)
             let tag = "";
             if (findRow) {
                 tag = findRow.name
@@ -832,6 +828,7 @@ export default {
             let endDate = util.formatDate.format(date, "yyyy-MM-dd");
             this.editForm = Object.assign({ money: 0, startTime: startDate, endTime: endDate, isRefresh: false, isConnection: true, isKeepPush: false, status: '未启用', resource: '未确认' });
             this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
+            this.$set(this.editForm, "cdn", this.defaultCDN)
             this.editFormVisible = true;
         },
         editSubmit() {

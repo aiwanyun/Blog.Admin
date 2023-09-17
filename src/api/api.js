@@ -634,6 +634,10 @@ export const getNsServer = params => {
 export const getAllNsServer = params => {
     return axios.get(`${base}/api/Nightscout/getAllNsServer`, { params: params });
 };
+//获取CDN
+export const GetCDNList = params => {
+    return axios.get(`${base}/api/Nightscout/GetCDNList`, { params: params });
+};
 
 //删除ns服务器
 export const delNsServer = params => {
