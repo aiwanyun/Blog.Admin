@@ -97,10 +97,13 @@
             </el-table-column>
 
 
+
             <el-table-column show-overflow-tooltip prop="status" label="状态" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="resource" label="来源" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="money" label="费用/元" width="90"></el-table-column>
 
+            <el-table-column show-overflow-tooltip prop="position" label="用户所在区域" width="150">
+            </el-table-column>
 
             <el-table-column show-overflow-tooltip prop="backupurl" label="备用访问" width="350">
                 <template slot-scope="scope">
@@ -167,7 +170,7 @@
                 <el-form-item label="名称" prop="name">
                     <el-input v-model="editForm.name" placeholder="如不填写,则自动生成" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-tooltip class="item" effect="dark" content="不需要额外添加https否则会出问题" placement="top">
+                <el-tooltip class="item" effect="dark" content="不需要额外添加https否则会出问题,修改后需要重启ns实例" placement="top">
                     <el-form-item label="访问地址" prop="url">
                         <el-input v-model="editForm.url" placeholder="如不填写,则自动生成">
                             <template slot="prepend">https://</template>
@@ -182,28 +185,35 @@
                     <el-date-picker type="date" placeholder="选择日期" v-model="editForm.endTime" value-format="yyyy-MM-dd"
                         :picker-options="pickerOptions"></el-date-picker>
                 </el-form-item>
-                <el-form-item label="密码" prop="passwd">
-                    <el-input v-model="editForm.passwd" placeholder="如不填写,则自动生成" auto-complete="off"></el-input>
-                </el-form-item>
+                <el-tooltip class="item" effect="dark" content="修改密码后需要重启ns实例" placement="top">
+                    <el-form-item label="密码" prop="passwd">
+                        <el-input v-model="editForm.passwd" placeholder="如不填写,则自动生成" auto-complete="off"></el-input>
+                    </el-form-item>
+                </el-tooltip>
                 <el-form-item label="电话" prop="tel">
                     <el-input v-model="editForm.tel" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
                     <el-input v-model="editForm.remark" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="部署服务器" prop="serverId">
-                    <el-select v-model="editForm.serverId" placeholder="请选择">
-                        <el-option v-for="item in nsServer" :key="item.Id"
-                            :label="item.serverName + '(' + item.count + '/' + item.holdCount + ')'" :value="item.Id">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="服务网络" prop="cdn">
-                    <el-select v-model="editForm.cdn" placeholder="请选择">
-                        <el-option v-for="item in cdnList" :key="item.key" :label="item.name" :value="item.key">
-                        </el-option>
-                    </el-select>
-                </el-form-item>
+                <el-tooltip class="item" effect="dark" content="修改后自动迁移实例并重启" placement="top">
+                    <el-form-item label="部署服务器" prop="serverId">
+                        <el-select v-model="editForm.serverId" placeholder="请选择">
+                            <el-option v-for="item in nsServer" :key="item.Id"
+                                :label="item.serverName + '(' + item.count + '/' + item.holdCount + ')'" :value="item.Id">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="修改后不需要重启" placement="top">
+                    <el-form-item label="服务网络" prop="cdn">
+                        <el-select v-model="editForm.cdn" placeholder="请选择">
+                            <el-option v-for="item in cdnList" :key="item.key" :label="item.name" :value="item.key">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                </el-tooltip>
+
                 <el-tooltip class="item" effect="dark" content="一般情况下不要乱动" placement="top">
                     <el-form-item label="实例IP" prop="instanceIP">
                         <el-input :disabled="true" v-model="editForm.instanceIP" auto-complete="off"
@@ -222,13 +232,13 @@
                         <el-radio v-model="editForm.isRefresh" :label="false">否</el-radio>
                     </el-form-item>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="设置后绑定微信后就可以推送了,需要重启实例一次" placement="top">
+                <el-tooltip class="item" effect="dark" content="设置后绑定微信后就可以推送了,需要重启ns实例一次" placement="top">
                     <el-form-item label="高低报警" prop="isConnection">
                         <el-radio v-model="editForm.isConnection" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isConnection" :label="false">否</el-radio>
                     </el-form-item>
                 </el-tooltip>
-                <el-tooltip class="item" effect="dark" content="设置持续推送后,需要重启实例一次" placement="top">
+                <el-tooltip class="item" effect="dark" content="设置持续推送后,需要重启ns实例一次" placement="top">
                     <el-form-item label="持续推送" prop="isKeepPush">
                         <el-radio v-model="editForm.isKeepPush" :label="true">是</el-radio>
                         <el-radio v-model="editForm.isKeepPush" :label="false">否</el-radio>
@@ -270,6 +280,15 @@
                         <el-option label="180" value="180"></el-option>
                         <el-option label="200" value="200"></el-option>
                     </el-select>
+                </el-form-item>
+
+
+
+                <el-form-item label="用户所在地区" :prop="(this.editType == '编辑' ? 'position_arr' : '')">
+                    <el-cascader :props="{ checkStrictly: true }" clearable filterable :options="pcaTextArr"
+                        v-model="editForm.position_arr">
+                    </el-cascader>
+
                 </el-form-item>
 
 
@@ -375,10 +394,18 @@ import {
 } from "../../api/api";
 import QRCode from "qrcode";
 import util from "../../../util/date";
+import { pcaTextArr } from 'element-china-area-data'
 export default {
     components: {},
     name: "Nightscout",
     data() {
+        var validateArr = (rule, value, callback) => {
+            if (value == '' || value.length === 0) {
+                callback(new Error('请填写用户所在区域'));
+            } else {
+                callback();
+            }
+        };
         return {
             para: {
                 name: ''
@@ -432,6 +459,10 @@ export default {
                 ],
                 cdn: [
                     { required: true, message: "服务网络不能为空", trigger: "blur" }
+                ],
+                position_arr: [
+                    { required: true, message: "请填写用户所在区域", trigger: "blur" },
+                    { validator: validateArr, trigger: 'blur' }
                 ]
             },
             pickerOptions: {
@@ -488,7 +519,8 @@ export default {
             plugins: [],
             nsServer: [],
             defaultCDN: '',
-            cdnList: []
+            cdnList: [],
+            pcaTextArr,
         };
     },
     created() {
@@ -814,6 +846,11 @@ export default {
             } else {
                 this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
             }
+            if (row.position) {
+                this.$set(this.editForm, "position_arr", JSON.parse(row.position))
+            } else {
+                this.$set(this.editForm, "position_arr", [])
+            }
             this.editFormVisible = true;
 
         },
@@ -828,16 +865,20 @@ export default {
             let endDate = util.formatDate.format(date, "yyyy-MM-dd");
             this.editForm = Object.assign({ money: 0, startTime: startDate, endTime: endDate, isRefresh: false, isConnection: true, isKeepPush: false, status: '未启用', resource: '未确认' });
             this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
+            this.$set(this.editForm, "position_arr", [])
             this.$set(this.editForm, "cdn", this.defaultCDN)
             this.editFormVisible = true;
         },
         editSubmit() {
             //保存
+            console.info("editForm", this.editForm)
+
             this.$refs.editForm.validate(valid => {
                 if (valid) {
                     this.$confirm("确认提交吗？", "提示", {}).then(() => {
                         this.editLoading = true;
                         this.editForm.plugins = JSON.stringify(this.editForm.plugins_arr)
+                        this.editForm.position = JSON.stringify(this.editForm.position_arr)
                         if (this.editType == "添加") {
                             addNightscout(this.editForm)
                                 .then(res => {
