@@ -284,7 +284,7 @@
 
 
 
-                <el-form-item label="用户所在地区" :prop="(this.editType == '编辑' ? 'position_arr' : '')">
+                <el-form-item v-if="editFormVisible" label="用户所在地区" :prop="(this.editType == '编辑' ? 'position_arr' : '')">
                     <el-cascader :props="{ checkStrictly: true }" clearable filterable :options="pcaTextArr"
                         v-model="editForm.position_arr">
                     </el-cascader>
@@ -400,6 +400,7 @@ export default {
     name: "Nightscout",
     data() {
         var validateArr = (rule, value, callback) => {
+            console.info("value",value)
             if (value == '' || value.length === 0) {
                 callback(new Error('请填写用户所在区域'));
             } else {
