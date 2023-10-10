@@ -5,8 +5,16 @@
             <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
                 <el-form :inline="true" :model="para" @submit.native.prevent style="margin-top: 10px;">
                     <el-form-item>
-                        <el-input clearable v-model="para.name" placeholder="标题/内容"
+                        <el-input clearable v-model="para.name" placeholder="请输入搜索关键词"
                             @keyup.enter.native.prevent="handleCurrentChange(1)"></el-input>
+                        
+                    </el-form-item>
+                    <el-form-item>
+                        <el-select clearable v-model="para.serverId" placeholder="请选择要搜索的服务器">
+                            <el-option v-for="item in nsServer" :key="item.Id"
+                                :label="item.serverName + '(' + item.count + '/' + item.holdCount + ')'" :value="item.Id">
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
@@ -779,6 +787,7 @@ export default {
         },
         handleTag(key) {
             this.para.name = key;
+            this.para.serverId = null;
             this.page.pageIndex = 1;
             this.handleSearch();
         },
@@ -788,7 +797,7 @@ export default {
             this.handleLog();
         },
         handleSearch() {
-            getNightscout({ key: this.para.name, pageSize: this.page.pageSize, page: this.page.pageIndex })
+            getNightscout({ key: this.para.name,serverId:this.para.serverId, pageSize: this.page.pageSize, page: this.page.pageIndex })
                 .then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.response.data;

@@ -257,7 +257,8 @@ import {
   resumeJob,
   getTaskNameSpace,
   GetTaskLogs,
-  GetTaskOverview
+  GetTaskOverview,
+  ExecuteJob
 } from "../../api/api";
 import { getButtonList } from "../../promissionRouter";
 import Toolbar from "../../components/Toolbar";
@@ -670,6 +671,48 @@ export default {
           //NProgress.start();
           let para = { jobId: row.Id };
           startJob(para).then((res) => {
+            if (util.isEmt.format(res)) {
+              this.listLoading = false;
+              return;
+            }
+            this.listLoading = false;
+            //NProgress.done();
+            if (res.data.success) {
+              this.$message({
+                message: res.data.msg,
+                type: "success",
+              });
+            } else {
+              this.$message({
+                message: res.data.msg,
+                type: "error",
+              });
+            }
+
+            this.getTasks();
+          });
+        })
+        .catch(() => { });
+    },
+    //立即执行
+    handleExecuteJob() {
+      let row = this.currentRow;
+      if (!row) {
+        this.$message({
+          message: "请选择要操作的一行数据！",
+          type: "error",
+        });
+
+        return;
+      }
+      this.$confirm("确认立即执行该Job吗?", "提示", {
+        type: "warning",
+      })
+        .then(() => {
+          this.listLoading = true;
+          //NProgress.start();
+          let para = { jobId: row.Id };
+          ExecuteJob(para).then((res) => {
             if (util.isEmt.format(res)) {
               this.listLoading = false;
               return;
