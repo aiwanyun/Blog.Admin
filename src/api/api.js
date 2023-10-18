@@ -173,10 +173,16 @@ const ToLogin = params => {
     if (global.IS_IDS4) {
         applicationUserManager.login();
     } else {
+        try {
+            window.localStorage.setItem("redirect", router.currentRoute.fullPath)
+        } catch (err) {
+
+        }
         router.replace({
             path: "/login",
             // query: { redirect: router.currentRoute.fullPath }
         });
+
         //window.location.reload()
     }
 };
