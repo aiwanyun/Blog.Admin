@@ -26,22 +26,24 @@
       style="width: 100%;"
     >
       <el-table-column type="index" width="80"></el-table-column>
-      <el-table-column prop="serverName" label="服务器名称" width="" ></el-table-column>
-      <el-table-column prop="serverIp" label="服务器地址" width ></el-table-column>
-      <el-table-column prop="serverPort" label="服务器端口" width ></el-table-column>
-      <el-table-column prop="curInstanceIp" label="当前实例IP" width sortable></el-table-column> 
-      <el-table-column prop="curInstanceIpSerial" label="当前实例IP序列" width sortable></el-table-column> 
-      <el-table-column prop="instanceIpTemplate" label="实例ip模板" width sortable></el-table-column> 
-      <el-table-column prop="curExposedPort" label="当前暴露端口" width sortable></el-table-column> 
-      <el-table-column prop="curServiceSerial" label="当前服务序列" width sortable></el-table-column> 
-      <el-table-column prop="mongoIp" label="数据库地址" width sortable></el-table-column> 
-      <el-table-column prop="mongoPort" label="数据库端口" width sortable></el-table-column> 
-      <el-table-column prop="mongoLoginName" label="数据库账号" width sortable></el-table-column> 
-      <el-table-column prop="mongoLoginPassword" label="数据库密码" width sortable></el-table-column> 
-      <el-table-column prop="remark" label="备注" width sortable></el-table-column> 
+      <el-table-column prop="serverName" label="服务器名称" width="150" ></el-table-column>
+      <el-table-column prop="serverIp" label="服务器地址" width="130" ></el-table-column>
+      <el-table-column prop="serverLoginName" label="服务器账号" width="100" ></el-table-column>
+      <el-table-column prop="serverLoginPassword" label="服务器密码" width="150" ></el-table-column>
+      <el-table-column prop="serverPort" label="服务器端口" width="90" ></el-table-column>
+      <el-table-column prop="curInstanceIp" label="实例IP" width="130"></el-table-column> 
+      <el-table-column prop="curInstanceIpSerial" label="实例IP序列" width="110"></el-table-column> 
+      <el-table-column prop="instanceIpTemplate" label="实例ip模板" width="130"></el-table-column> 
+      <el-table-column prop="curExposedPort" label="当前端口" width="100"></el-table-column> 
+      <el-table-column prop="curServiceSerial" label="当前序列" width="100"></el-table-column> 
+      <el-table-column prop="mongoIp" label="数据库地址" width="130"></el-table-column> 
+      <el-table-column prop="mongoLoginName" label="数据库账号" width="100"></el-table-column> 
+      <el-table-column prop="mongoLoginPassword" label="数据库密码" width="150"></el-table-column> 
+      <el-table-column prop="mongoPort" label="数据库端口" width="100"></el-table-column> 
+      <el-table-column prop="remark" label="备注" width="200"></el-table-column> 
       
       
-      <el-table-column label="操作"  fixed="right">
+      <el-table-column label="操作"  fixed="right" width="150">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="handleEdit(scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" plain @click="handleDel(scope.row)">删除</el-button> 
@@ -183,7 +185,7 @@ export default {
     handleDel(row) {
       this.$confirm("确认删除吗？", "提示", {}).then(() => {
         var servers = [];
-        servers.push(row.id);
+        servers.push(row.Id);
         delNsServer(servers).then(res => {
           if (res.data.success) {
             this.searchWeChatAccount();
@@ -255,7 +257,7 @@ export default {
       this.$confirm("确认批量删除吗？", "提示").then(() => {
         //批量删除
         if (this.sels.length > 0) {
-          var servers = this.sels.map(t => t.id);
+          var servers = this.sels.map(t => t.Id);
           delNsServer(servers)
             .then(res => {
               if (res.data.success) {

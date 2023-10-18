@@ -657,4 +657,29 @@ export const addNsServer = params => {
 };
 
 
+//获取ns广告
+export const getNsBanner = params => {
+    return axios.get(`${base}/api/Nightscout/getNsBanner`, { params: params });
+};
+//删除ns广告 
+export const delNsBanner = params => {
+    return axios.put(`${base}/api/Nightscout/delNsBanner`, params);
+};
+//更新ns广告
+export const updateNsBanner = params => {
+    return axios.put(`${base}/api/Nightscout/updateNsBanner`, params);
+};
+//添加ns广告
+export const addNsBanner = params => {
+    return axios.post(`${base}/api/Nightscout/addNsBanner`, params);
+};
+//开启所有ns广告
+export const enableAllBanner = params => {
+    return axios.post(`${base}/api/Nightscout/enableAllBanner`, params);
+};
+//禁用所有ns广告
+export const disableAllBanner = params => {
+    return axios.post(`${base}/api/Nightscout/disableAllBanner`, params);
+};
+
 

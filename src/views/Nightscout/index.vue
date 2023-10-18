@@ -7,7 +7,7 @@
                     <el-form-item>
                         <el-input clearable v-model="para.name" placeholder="请输入搜索关键词"
                             @keyup.enter.native.prevent="handleCurrentChange(1)"></el-input>
-                        
+
                     </el-form-item>
                     <el-form-item>
                         <el-select clearable v-model="para.serverId" placeholder="请选择要搜索的服务器">
@@ -23,19 +23,40 @@
                         <el-button type="primary" @click="handleView(false)">预览-备用</el-button>
                     </el-form-item>
                     <el-form-item>
-                        <label>状态:</label>
-                        <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '30px' }" :key="item.name"
-                            v-for="(item, index) in summary.status" :value="item.count" class="item">
-                            <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;">{{
-                                (item.name ? item.name : '未确认') }}</el-tag>
-                        </el-badge>
-                        <label style="margin-left: 10px;">来源:</label>
-                        <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '30px' }" :key="item.name"
-                            v-for="(item, index) in summary.resource" :value="item.count" class="item">
-                            <el-tag @click="handleTag(item.name)" style="cursor:pointer;width: 60px;text-align: center;;"
-                                type="info">{{ (item.name ? item.name : '未确认')
-                                }}</el-tag>
-                        </el-badge>
+                        <el-row>
+                            <el-col>
+                                <strong>状态:</strong>
+                                <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '30px' }" :key="item.name"
+                                    v-for="(item, index) in summary.status" :value="item.count" class="item">
+                                    <el-tag @click="handleTag(item.name)"
+                                        style="cursor:pointer;width: 60px;text-align: center;">{{
+                                            (item.name ? item.name : '未确认') }}</el-tag>
+                                </el-badge>
+                            </el-col>
+                            <el-col style="margin-top:10px">
+                                <strong>来源:</strong>
+                                <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '30px' }" :key="item.name"
+                                    v-for="(item, index) in summary.resource" :value="item.count" class="item">
+                                    <el-tag @click="handleTag(item.name)"
+                                        style="cursor:pointer;width: 60px;text-align: center;;" type="info">{{ (item.name ?
+                                            item.name : '未确认')
+                                        }}</el-tag>
+                                </el-badge>
+                            </el-col>
+                            <el-col style="margin-top:10px">
+                                <strong>账单:</strong>
+                                <el-badge :style="{ 'margin-left': index === 0 ? '0px' : '30px' }" :key="item.name"
+                                    v-for="(item, index) in summary.account" :value="item.count" class="item">
+                                    <el-tag @click="handleTag(item.name)"
+                                        style="cursor:pointer;width: 60px;text-align: center;;" type="info">{{ (item.name ?
+                                            item.name : '未确认')
+                                        }}</el-tag>
+                                </el-badge>
+                            </el-col>
+                        </el-row>
+
+
+
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -108,6 +129,7 @@
 
             <el-table-column show-overflow-tooltip prop="status" label="状态" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="resource" label="来源" width="90"></el-table-column>
+            <el-table-column show-overflow-tooltip prop="accountStatus" label="分账" width="90"></el-table-column>
             <el-table-column show-overflow-tooltip prop="money" label="费用/元" width="90"></el-table-column>
 
             <el-table-column show-overflow-tooltip prop="position" label="用户所在区域" width="150">
@@ -148,6 +170,8 @@
                                 @click.native="handleLog(scope.row)">操作日志</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete"
                                 @click.native="handleDel(scope.row)">删除</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-document-copy"
+                                @click.native="copy(scope.row.Id)">复制用户ID</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
                                 @click.native="copy('https://' + scope.row.url)">复制url地址</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
@@ -275,6 +299,15 @@
                         <el-option label="介绍" value="介绍"></el-option>
                         <el-option label="分成" value="分成"></el-option>
                         <el-option label="未确认" value="未确认"></el-option>
+                    </el-select>
+                </el-form-item>
+
+                <el-form-item label="分账" prop="accountStatus">
+                    <el-select clearable v-model="editForm.accountStatus" placeholder="请选择来源">
+                        <el-option label="已分账" value="已分账"></el-option>
+                        <el-option label="未分账" value="未分账"></el-option>
+                        <el-option label="无账单" value="无账单"></el-option>
+                        <el-option label="未开启" value="未开启"></el-option>
                     </el-select>
                 </el-form-item>
 
@@ -408,7 +441,7 @@ export default {
     name: "Nightscout",
     data() {
         var validateArr = (rule, value, callback) => {
-            console.info("value",value)
+            console.info("value", value)
             if (value == '' || value.length === 0) {
                 callback(new Error('请填写用户所在区域'));
             } else {
@@ -417,14 +450,16 @@ export default {
         };
         return {
             para: {
-                name: ''
+                name: '',
+                serverId: null
             },
             tableData: [],
             tableUser: [],
             tableLog: [],
             summary: {
                 status: [],
-                resource: []
+                resource: [],
+                account: []
             },
             sels: [],
             page: {
@@ -797,7 +832,7 @@ export default {
             this.handleLog();
         },
         handleSearch() {
-            getNightscout({ key: this.para.name,serverId:this.para.serverId, pageSize: this.page.pageSize, page: this.page.pageIndex })
+            getNightscout({ key: this.para.name, serverId: this.para.serverId, pageSize: this.page.pageSize, page: this.page.pageIndex })
                 .then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.response.data;
@@ -819,6 +854,7 @@ export default {
                 if (res.data.success) {
                     this.summary.status = res.data.response.status
                     this.summary.resource = res.data.response.resource
+                    this.summary.account = res.data.response.account
                 } else {
                     this.$message({
                         message: res.data.msg || "统计数据获取失败!",
@@ -873,7 +909,7 @@ export default {
             let startDate = util.formatDate.format(date, "yyyy-MM-dd");
             date.setTime(date.getTime() + 3600 * 1000 * 24 * 365);
             let endDate = util.formatDate.format(date, "yyyy-MM-dd");
-            this.editForm = Object.assign({ money: 0, startTime: startDate, endTime: endDate, isRefresh: false, isConnection: true, isKeepPush: false, status: '未启用', resource: '未确认' });
+            this.editForm = Object.assign({ money: 0, startTime: startDate, endTime: endDate, isRefresh: false, isConnection: true, isKeepPush: false, status: '未启用', resource: '未确认', accountStatus: '未开启' });
             this.$set(this.editForm, "plugins_arr", JSON.parse(JSON.stringify(this.plugins.map(t => t.key))))
             this.$set(this.editForm, "position_arr", [])
             this.$set(this.editForm, "cdn", this.defaultCDN)
