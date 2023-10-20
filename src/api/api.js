@@ -174,7 +174,9 @@ const ToLogin = params => {
         applicationUserManager.login();
     } else {
         try {
-            window.localStorage.setItem("redirect", router.currentRoute.fullPath)
+            let redirect = window.localStorage.getItem("redirect")
+            if (!redirect)
+                window.localStorage.setItem("redirect", router.currentRoute.fullPath)
         } catch (err) {
 
         }

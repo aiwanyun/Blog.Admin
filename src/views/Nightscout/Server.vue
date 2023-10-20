@@ -40,6 +40,7 @@
       <el-table-column prop="mongoLoginName" label="数据库账号" width="100"></el-table-column> 
       <el-table-column prop="mongoLoginPassword" label="数据库密码" width="150"></el-table-column> 
       <el-table-column prop="mongoPort" label="数据库端口" width="100"></el-table-column> 
+      <el-table-column prop="holdCount" label="理论实例数量" width="100"></el-table-column> 
       <el-table-column prop="remark" label="备注" width="200"></el-table-column> 
       
       
@@ -110,6 +111,9 @@
         </el-form-item> 
         <el-form-item label="数据库密码" prop="mongoLoginPassword">
           <el-input v-model="editForm.mongoLoginPassword" auto-complete="off"></el-input>
+        </el-form-item> 
+        <el-form-item label="理论实例数量" prop="holdCount">
+          <el-input v-model="editForm.holdCount" auto-complete="off"></el-input>
         </el-form-item> 
         <el-form-item label="备注" prop="remark">
           <el-input v-model="editForm.remark" auto-complete="off"></el-input>
