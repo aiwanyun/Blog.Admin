@@ -173,6 +173,8 @@
                             <el-dropdown-item icon="el-icon-document-copy"
                                 @click.native="copy(scope.row.Id)">复制用户ID</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
+                                @click.native="copy(scope.row.miniUrl)">复制小程序访问地址</el-dropdown-item>
+                            <el-dropdown-item icon="el-icon-document-copy"
                                 @click.native="copy('https://' + scope.row.url)">复制url地址</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-document-copy"
                                 @click.native="copy(scope.row.passwd)">复制密码</el-dropdown-item>
