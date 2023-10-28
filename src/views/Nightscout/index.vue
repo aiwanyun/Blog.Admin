@@ -17,6 +17,12 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item>
+                        <el-select clearable v-model="para.cdn" placeholder="请选择要搜索的服务网络类型">
+                            <el-option v-for="item in cdnList" :key="item.key" :label="item.name" :value="item.key">
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item>
                         <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
                         <el-button type="primary" @click="handleAdd">新增</el-button>
                         <el-button type="primary" @click="handleView(true)">预览</el-button>
@@ -84,7 +90,7 @@
             <el-table-column show-overflow-tooltip prop="passwd" label="密码" width="150"></el-table-column>
             <el-table-column show-overflow-tooltip prop="instanceIP" label="实例IP" width="150"></el-table-column>
             <el-table-column show-overflow-tooltip prop="serviceName" label="服务名称" width="200"></el-table-column>
-            <el-table-column show-overflow-tooltip prop="serverId" label="服务器" width="150">
+            <el-table-column show-overflow-tooltip prop="serverId" label="服务器" width="250">
                 <template slot-scope="scope">{{
                     getServerName(scope.row)
                 }}</template>
@@ -453,7 +459,8 @@ export default {
         return {
             para: {
                 name: '',
-                serverId: null
+                serverId: null,
+                cdn: null
             },
             tableData: [],
             tableUser: [],
@@ -834,7 +841,7 @@ export default {
             this.handleLog();
         },
         handleSearch() {
-            getNightscout({ key: this.para.name, serverId: this.para.serverId, pageSize: this.page.pageSize, page: this.page.pageIndex })
+            getNightscout({ key: this.para.name, serverId: this.para.serverId, cdn: this.para.cdn, pageSize: this.page.pageSize, page: this.page.pageIndex })
                 .then(res => {
                     if (res.data.success) {
                         this.tableData = res.data.response.data;

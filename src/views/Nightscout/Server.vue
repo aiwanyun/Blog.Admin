@@ -26,8 +26,8 @@
       style="width: 100%;"
     >
       <el-table-column type="index" width="80"></el-table-column>
-      <el-table-column prop="serverName" label="服务器名称" width="150" ></el-table-column>
-      <el-table-column prop="serverIp" label="服务器地址" width="130" ></el-table-column>
+      <el-table-column prop="serverName" label="服务器名称" width="250" ></el-table-column>
+      <el-table-column prop="serverIp" label="服务器地址" width="150" ></el-table-column>
       <el-table-column prop="serverLoginName" label="服务器账号" width="100" ></el-table-column>
       <el-table-column prop="serverLoginPassword" label="服务器密码" width="150" ></el-table-column>
       <el-table-column prop="serverPort" label="服务器端口" width="90" ></el-table-column>
