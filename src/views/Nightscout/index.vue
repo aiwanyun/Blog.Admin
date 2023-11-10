@@ -25,6 +25,7 @@
                     <el-form-item>
                         <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
                         <el-button type="primary" @click="handleAdd">新增</el-button>
+                        <el-button type="primary" @click="handleCDN">切换整体网络</el-button>
                         <el-button type="primary" @click="handleView(true)">预览</el-button>
                         <el-button type="primary" @click="handleView(false)">预览-备用</el-button>
                     </el-form-item>
@@ -439,7 +440,8 @@ import {
     GetSummary,
     GetPlugins,
     getAllNsServer,
-    GetCDNList
+    GetCDNList,
+    ChangeCDN
 } from "../../api/api";
 import QRCode from "qrcode";
 import util from "../../../util/date";
@@ -585,6 +587,30 @@ export default {
         this.GetCDNList()
     },
     methods: {
+        handleCDN() {
+            if (!this.para.cdn) {
+                this.$message({
+                    message: "请选择要切换的CDN服务网络",
+                    type: "error"
+                });
+                return;
+            }
+            var findRow = this.cdnList.find(t => t.key == this.para.cdn)
+
+            this.$confirm("确定要所有默认的CDN网络切换至[" + findRow.name + "]吗?", "提示", {}).then(() => {
+                ChangeCDN({ cdnCode: this.para.cdn }).then(res => {
+
+                    if (res.data && res.data.success) {
+                        this.handleCurrentChange(1)
+                        this.$message({
+                            message: res.data.msg || "切换成功!",
+                            type: "success"
+                        });
+
+                    }
+                })
+            });
+        },
         GetCDNList() {
             GetCDNList().then(res => {
                 if (res.data.success) {

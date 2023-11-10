@@ -690,4 +690,8 @@ export const disableAllBanner = params => {
     return axios.post(`${base}/api/Nightscout/disableAllBanner`, params);
 };
 
+//切换解析
+export const ChangeCDN = params => {
+    return axios.get(`${base}/api/Nightscout/ChangeCDN`, { params: params });
+};
 
