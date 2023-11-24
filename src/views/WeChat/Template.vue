@@ -3,73 +3,49 @@
     <!--工具条-->
     <!--工具条-->
     <el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
-      <el-form :inline="true"  @submit.native.prevent>
-        <el-form-item> 
+      <el-form :inline="true" @submit.native.prevent>
+        <el-form-item>
           <el-select v-model="selectWeChat" placeholder="请选择要操作的公众号">
-            <el-option
-              v-for="item in wechats"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+            <el-option v-for="item in wechats" :key="item.value" :label="item.label" :value="item.value">
               <span style="float: left">{{ item.label }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item> 
-          <el-button type="primary" :disabled="selectWeChat==''" @click="searchWeChatAccount(selectWeChat)">刷新</el-button>
-          <el-button type="primary" :disabled="selectWeChat==''" @click="handleSendCar">模拟消息</el-button>
+        <el-form-item>
+          <el-button type="primary" :disabled="selectWeChat == ''"
+            @click="searchWeChatAccount(selectWeChat)">刷新</el-button>
+          <el-button type="primary" :disabled="selectWeChat == ''" @click="handleSendCar">模拟消息</el-button>
         </el-form-item>
       </el-form>
-      
-        
+
+
     </el-col>
 
     <!--列表-->
-    <el-table
-      :data="tableData"
-      highlight-current-row
-      @current-change="selectCurrentRow"
-      v-loading="listLoading" 
-      style="width: 100%;"
-    > 
+    <el-table :data="tableData" highlight-current-row @current-change="selectCurrentRow" v-loading="listLoading"
+      style="width: 100%;">
       <el-table-column type="index" width="80"></el-table-column>
       <el-table-column prop="title" label="标题" width sortable></el-table-column>
       <el-table-column prop="template_id" label="模板ID" width sortable></el-table-column>
       <el-table-column prop="content" label="示例" width sortable></el-table-column>
-      <el-table-column prop="example" label="格式" width sortable></el-table-column>  
+      <el-table-column prop="example" label="格式" width sortable></el-table-column>
     </el-table>
-     <!--工具条-->
+    <!--工具条-->
     <el-col :span="24" class="toolbar">
-       
-      <el-pagination
-        layout="prev, pager, next"
-        @current-change="handleCurrentChange"
-        :page-size="page.pageSize"
-        :total="page.pageTotal"
-        style="float:right;"
-      ></el-pagination>
+
+      <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="page.pageSize"
+        :total="page.pageTotal" style="float:right;"></el-pagination>
     </el-col>
 
 
 
     <!--模拟消息-->
-    <el-dialog
-      title="卡片消息"
-      :visible.sync="editFormVisible"
-      v-model="editFormVisible"
-      :close-on-click-modal="false"
-    >
+    <el-dialog title="卡片消息" :visible.sync="editFormVisible" v-model="editFormVisible" :close-on-click-modal="false">
       <el-form :model="editForm" label-width="200px" :rules="editFormRules" ref="editForm">
         <el-form-item label="公众号" prop="id">
           <el-select v-model="editForm.info.id" placeholder="请选择要操作的公众号">
-            <el-option
-              v-for="item in wechats"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+            <el-option v-for="item in wechats" :key="item.value" :label="item.label" :value="item.value">
               <span style="float: left">{{ item.label }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
             </el-option>
@@ -77,12 +53,7 @@
         </el-form-item>
         <el-form-item label="选择客户" prop="companyCode">
           <el-select v-model="editForm.info.companyCode" placeholder="请选择要操作的客户">
-            <el-option
-              v-for="item in companys"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
+            <el-option v-for="item in companys" :key="item.value" :label="item.label" :value="item.value">
               <span style="float: left">{{ item.label }}</span>
               <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
             </el-option>
@@ -94,51 +65,71 @@
         <el-form-item label="模板ID" prop="template_id">
           <el-input v-model="editForm.cardMsg.template_id" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="first" prop="first">
-          <el-input v-model="editForm.cardMsg.first" auto-complete="off"></el-input>
+
+        <el-form-item label="消息模板类型" prop="template_id">
+          <el-radio v-model="editForm.isNewVersion" :label="true">新版本</el-radio>
+          <el-radio v-model="editForm.isNewVersion" :label="false">老版本</el-radio>
         </el-form-item>
-        <el-form-item label="colorFirst" prop="colorFirst">
+
+        <div v-show="editForm.isNewVersion == true">
+          <el-button type="primary" plain @click="addPars">添加</el-button>
+          <el-row :gutter="10" :key="index" v-for="(item, index) in newVersionData"
+            style="margin-top: 5px;margin-bottom: 5px;text-align: center;">
+            <el-col :span="1.5"><el-input v-model="item.key" auto-complete="off"></el-input></el-col>
+            <el-col :span="1.5"><el-input v-model="item.val" auto-complete="off"></el-input></el-col>
+            <el-col :span="1.5"> <el-button type="danger" plain @click="delPars(index)">删除</el-button></el-col>
+          </el-row>
+        </div>
+
+        <div v-show="editForm.isNewVersion == false">
+          <el-form-item label="first" prop="first">
+            <el-input v-model="editForm.cardMsg.first" auto-complete="off"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="colorFirst" prop="colorFirst">
           <el-input v-model="editForm.cardMsg.colorFirst" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="keyword1" prop="keyword1">
-          <el-input v-model="editForm.cardMsg.keyword1" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="color1" prop="color1">
+        </el-form-item> -->
+          <el-form-item label="keyword1" prop="keyword1">
+            <el-input v-model="editForm.cardMsg.keyword1" auto-complete="off"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="color1" prop="color1">
           <el-input v-model="editForm.cardMsg.color1" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="keyword2" prop="keyword2">
-          <el-input v-model="editForm.cardMsg.keyword2" auto-complete="off" ></el-input>
-        </el-form-item>
-        <el-form-item label="color2" prop="color2">
+        </el-form-item> -->
+          <el-form-item label="keyword2" prop="keyword2">
+            <el-input v-model="editForm.cardMsg.keyword2" auto-complete="off"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="color2" prop="color2">
           <el-input v-model="editForm.cardMsg.color2" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="keyword3" prop="keyword3">
-          <el-input v-model="editForm.cardMsg.keyword3" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="color3" prop="color3">
+        </el-form-item>  -->
+          <el-form-item label="keyword3" prop="keyword3">
+            <el-input v-model="editForm.cardMsg.keyword3" auto-complete="off"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="color3" prop="color3">
           <el-input v-model="editForm.cardMsg.color3" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="keyword4" prop="keyword4">
-          <el-input v-model="editForm.cardMsg.keyword4" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="color4" prop="color4">
+        </el-form-item>  -->
+          <el-form-item label="keyword4" prop="keyword4">
+            <el-input v-model="editForm.cardMsg.keyword4" auto-complete="off"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="color4" prop="color4">
           <el-input v-model="editForm.cardMsg.color4" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="keyword5" prop="keyword5">
-          <el-input v-model="editForm.cardMsg.keyword5" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="color5" prop="color5">
+        </el-form-item>  -->
+          <el-form-item label="keyword5" prop="keyword5">
+            <el-input v-model="editForm.cardMsg.keyword5" auto-complete="off"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="color5" prop="color5">
           <el-input v-model="editForm.cardMsg.color5" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="remark" prop="remark">
-          <el-input v-model="editForm.cardMsg.remark" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="colorRemark" prop="colorRemark">
+        </el-form-item>  -->
+          <el-form-item label="remark" prop="remark">
+            <el-input v-model="editForm.cardMsg.remark" auto-complete="off"></el-input>
+          </el-form-item>
+          <!-- <el-form-item label="colorRemark" prop="colorRemark">
           <el-input v-model="editForm.cardMsg.colorRemark" auto-complete="off"></el-input>
-        </el-form-item> 
-         <el-form-item label="url" prop="url">
+        </el-form-item>  -->
+        </div>
+
+
+        <el-form-item label="url" prop="url">
           <el-input v-model="editForm.cardMsg.url" auto-complete="off"></el-input>
-        </el-form-item>  
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -169,34 +160,46 @@ export default {
       wechats: [], //微信公众号列表
       companys: [], //客户列表
       selectWeChat: "", //当前选中的微信公众号
-      currentRow:null,//当前选中行
+      currentRow: null,//当前选中行
       editFormVisible: false,
-      editLoading: false, 
+      editLoading: false,
       editForm: {
-        info:{
-          id:'',
-          companyCode:'',
-          userID:''
+        info: {
+          id: '',
+          companyCode: '',
+          userID: ''
         },
-        cardMsg:{
-          template_id:'',
-          first:'',
-          colorFirst:'',
-          keyword1:'',
-          color1:'',
-          keyword2:'',
-          color2:'',
-          keyword3:'',
-          color3:'',
-          keyword4:'',
-          color4:'',
-          keyword5:'',
-          color5:'',
-          remark:'',
-          colorRemark:'',
-          url:''
-        }
+        cardMsg: {
+          template_id: '',
+          first: '',
+          colorFirst: '',
+          keyword1: '',
+          color1: '',
+          keyword2: '',
+          color2: '',
+          keyword3: '',
+          color3: '',
+          keyword4: '',
+          color4: '',
+          keyword5: '',
+          color5: '',
+          remark: '',
+          colorRemark: '',
+          url: ''
+        },
+        isNewVersion: false
       },
+      newVersionData: [
+        {
+          key: 'thing1',
+          val: ''
+        },
+
+        {
+          key: 'time2',
+          val: ''
+        }
+      ],
       editFormRules: {
         // userID: [
         //   { required: true, message: "请输入用户ID", trigger: "blur" }
@@ -214,34 +217,53 @@ export default {
     };
   },
   created() {
-     this.getWeChats();
-     this.getWeCompanys();
+    this.getWeChats();
+    this.getWeCompanys();
   },
-  methods: { 
+  methods: {
+    //添加参数
+    addPars() {
+      this.newVersionData.push({ key: '', val: '' })
+    },
+    //删除参数
+    delPars(index) {
+      this.newVersionData.splice(index, 1)
+    },
     editSubmit() {
       //保存
       this.$refs.editForm.validate(valid => {
         if (valid) {
           this.$confirm("确认发送吗？", "提示", {}).then(() => {
             this.editLoading = true;
-            pushCardMsg(this.editForm)
-            .then(res => {
-              this.editLoading = false;
-              if (res.data.success) { 
-                this.editFormVisible = false;
-                this.$message.success("推送成功!");
-              }else{
-                  this.$message.error(res.data.msg);
+            if (this.editForm.isNewVersion) {
+              this.editForm.newMsg = {}
+
+              for (let idx = 0; idx < this.newVersionData.length; idx++) {
+                const newData = this.newVersionData[idx];
+                this.editForm.newMsg[newData.key] = { value: newData.val}
               }
-              
-            });
+
+            } else {
+              this.editForm.newMsg = {}
+            }
+            pushCardMsg(this.editForm)
+              .then(res => {
+                this.editLoading = false;
+                if (res.data.success) {
+                  this.editFormVisible = false;
+                  this.$message.success("推送成功!");
+                } else {
+                  this.$message.error(res.data.msg);
+                }
+
+              });
           });
         }
       });
     },
     getWeCompanys() {
       getWeChatCompany().then(res => {
-        this.companys = []; 
+        this.companys = [];
         res.data.response.data.forEach(element => {
           this.companys.push({
             value: element.CompanyID,
@@ -253,9 +275,9 @@ export default {
     selectCurrentRow(val) {
       this.currentRow = val;
     },
-    handleSendCar(){ 
+    handleSendCar() {
       this.editForm.info.id = this.selectWeChat;
-      if(this.currentRow)
+      if (this.currentRow)
         this.editForm.cardMsg.template_id = this.currentRow.template_id;
       this.editFormVisible = true;
     },
@@ -266,21 +288,21 @@ export default {
     searchWeChatAccount(id) {
       this.listLoading = true;
       this.tableData = [];
-      getWeChatTemplate({id:id})
+      getWeChatTemplate({ id: id })
         .then(res => {
-          this.listLoading = false; 
-          if(res.data.success){ 
-              this.tableData = res.data.response.template_list;  
-          }else{
-             this.$message.error(res.data.msg);
+          this.listLoading = false;
+          if (res.data.success) {
+            this.tableData = res.data.response.template_list;
+          } else {
+            this.$message.error(res.data.msg);
           }
         })
     },
     getWeChats() {
       getWeChatAccount().then(res => {
-        if(!res.data.success){
-           this.$message.error(res.data.msg);
-           return;
+        if (!res.data.success) {
+          this.$message.error(res.data.msg);
+          return;
         }
         this.wechats = [];
         res.data.response.data.forEach(element => {
@@ -293,10 +315,10 @@ export default {
     }
   },
   mounted() {
-    
+
   },
   watch: {
-    selectWeChat: function(newName, oldName) { 
+    selectWeChat: function (newName, oldName) {
       this.searchWeChatAccount(newName);
     }
   }
