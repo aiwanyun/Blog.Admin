@@ -115,7 +115,7 @@ export default {
         conditions:"SubFromPublicAccount = " + this.selectWeChat + " & " + "IsUnBind = false"
       };
       if(this.selectCompany){
-        pars.conditions += "& CompanyID = "+this.selectCompany
+        pars.conditions += " & CompanyID = "+this.selectCompany
       }
       getWeChatBindUser(pars).then(res => {
         this.listLoading = false;
